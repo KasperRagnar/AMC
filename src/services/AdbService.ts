@@ -63,7 +63,8 @@ export class AdbService {
   async listFilesRecursive(phonePath: string): Promise<string[]> {
     try {
       const output = await this.run(['shell', 'find', phonePath, '-type', 'f']);
-      return output.trim().split('\n').filter(l => l.trim().length > 0);
+      // adb shell output uses CRLF on Windows — trim() strips the \r so paths are clean
+      return output.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0);
     } catch {
       return [];
     }

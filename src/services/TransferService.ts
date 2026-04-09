@@ -25,6 +25,10 @@ export interface ConflictEvent {
   destPath: string;
 }
 
+export interface ScanEvent {
+  total: number;
+}
+
 export interface SummaryEvent {
   copied: number;
   skipped: number;
@@ -84,6 +88,9 @@ export class TransferService extends EventEmitter {
 
     const allFiles = await this.adb.listFilesRecursive(sourceDir);
     const filtered = allFiles.filter(f => this.matchesType(f, fileType));
+
+    // Tell the frontend how many files were found before copying begins
+    this.emit('scan', { total: filtered.length });
 
     const summary: SummaryEvent = { copied: 0, skipped: 0, errors: 0 };
     // 'skip-all' or 'overwrite-all' applied to all remaining conflicts

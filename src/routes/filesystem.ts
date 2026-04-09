@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import path from 'path';
+import os from 'os';
 import { FileService } from '../services/FileService';
 
 const router = Router();
@@ -8,6 +9,10 @@ const fileService = new FileService();
 router.get('/roots', async (_req, res) => {
   const roots = await fileService.getRoots();
   res.json({ roots });
+});
+
+router.get('/home', (_req, res) => {
+  res.json({ home: os.homedir() });
 });
 
 router.get('/browse', async (req, res) => {

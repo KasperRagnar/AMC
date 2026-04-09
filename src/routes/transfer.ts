@@ -37,6 +37,7 @@ export function createTransferRouter(getWs: () => WebSocket | null) {
     activeTransfer?.cancel();
 
     activeTransfer = new TransferService(adb, exif, files);
+    activeTransfer.on('scan',     data => send({ type: 'scan',     ...data }));
     activeTransfer.on('progress', data => send({ type: 'progress', ...data }));
     activeTransfer.on('conflict', data => send({ type: 'conflict', ...data }));
     activeTransfer.on('complete', data => send({ type: 'complete', ...data }));

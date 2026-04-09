@@ -325,6 +325,13 @@ main {
 .btn-secondary:hover { background: #eff6ff; }
 
 /* ─── Transfer screen ────────────────────────────────────────────────────── */
+.transfer-found {
+  font-size: 0.85rem;
+  color: var(--primary);
+  text-align: center;
+  font-weight: 600;
+}
+
 .transfer-count {
   font-size: 0.85rem;
   color: var(--muted);

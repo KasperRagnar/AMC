@@ -41,7 +41,9 @@
     "selectPaths": "Por favor, selecciona una carpeta de origen en el teléfono y una carpeta de destino en este ordenador antes de empezar."
   },
   "transfer": {
+    "scanning": "Buscando archivos en el teléfono...",
     "title": "Copiando archivos...",
+    "found": "Se encontraron {total} archivos en el teléfono",
     "fileOf": "Archivo {current} de {total}",
     "conflict": {
       "title": "El archivo ya existe",

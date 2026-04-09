@@ -41,7 +41,9 @@
     "selectPaths": "Please select both a source folder on the phone and a destination folder on this computer before starting."
   },
   "transfer": {
+    "scanning": "Scanning phone for files...",
     "title": "Copying files...",
+    "found": "Found {total} files on phone",
     "fileOf": "File {current} of {total}",
     "conflict": {
       "title": "File already exists",

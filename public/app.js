@@ -6,6 +6,7 @@ const state = {
   destPath:    null,     // selected local path
   browserMode: null,     // 'phone' | 'local'  (while modal is open)
   browserPath: null,     // currently viewed path in browser modal
+  homeDir:     null,     // local user home directory (fetched from API)
   ws:          null,     // active WebSocket during transfer
 };
 
@@ -44,6 +45,12 @@ function applyStaticTranslations() {
 // ─── Initialization ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   await loadLanguage('en');
+
+  // Resolve local home dir once so the browser can start there
+  try {
+    const r = await fetch('/api/filesystem/home');
+    state.homeDir = (await r.json()).home;
+  } catch { /* fall back to null — browser will start at root */ }
 
   // Language selector
   document.getElementById('lang-select').addEventListener('change', e => {
@@ -188,11 +195,9 @@ async function openBrowser(mode) {
   document.getElementById('modal-browser').hidden = false;
 
   if (mode === 'phone') {
-    await navigatePhone('/sdcard');
+    await navigatePhone('/storage/emulated/0');
   } else {
-    const res = await fetch('/api/filesystem/roots');
-    const { roots } = await res.json();
-    await navigateLocal(roots[0]);
+    await navigateLocal(state.homeDir ?? '/');
   }
 }
 
@@ -217,6 +222,15 @@ function confirmBrowserSelection() {
   document.getElementById('setup-hint').hidden = true;
 }
 
+// Android system folders that are not useful for photo/video selection
+const ANDROID_SYSTEM_DIRS = new Set([
+  'Android', 'lost+found', 'obb', '.trash', '.thumbnails',
+]);
+
+function isAndroidSystemDir(name) {
+  return name.startsWith('.') || ANDROID_SYSTEM_DIRS.has(name);
+}
+
 async function navigatePhone(path) {
   state.browserPath = path;
   document.getElementById('browser-path-bar').textContent = path;
@@ -224,7 +238,8 @@ async function navigatePhone(path) {
 
   const res = await fetch(`/api/device/browse?path=${encodeURIComponent(path)}`);
   const { entries, parent } = await res.json();
-  renderBrowserEntries(entries.filter(e => e.type === 'dir'), parent, navigatePhone);
+  const dirs = entries.filter(e => e.type === 'dir' && !isAndroidSystemDir(e.name));
+  renderBrowserEntries(dirs, parent, navigatePhone);
 }
 
 async function navigateLocal(path) {
@@ -234,7 +249,10 @@ async function navigateLocal(path) {
 
   const res = await fetch(`/api/filesystem/browse?path=${encodeURIComponent(path)}`);
   const { entries, parent } = await res.json();
-  renderBrowserEntries(entries.filter(e => e.type === 'dir'), parent, navigateLocal);
+
+  // Don't allow navigating above the user's home directory
+  const atHome = state.homeDir && path === state.homeDir;
+  renderBrowserEntries(entries.filter(e => e.type === 'dir'), atHome ? null : parent, navigateLocal);
 }
 
 function showBrowserLoading() {
@@ -291,6 +309,12 @@ async function startTransfer() {
 
   // Open WebSocket before starting — ensures events are not missed
   await openWebSocket();
+  // Reset transfer screen to "scanning" state
+  document.getElementById('transfer-title').textContent = t('transfer.scanning');
+  document.getElementById('transfer-found').hidden = true;
+  document.getElementById('transfer-count').textContent = '';
+  document.getElementById('transfer-filename').textContent = '';
+  document.getElementById('progress-fill').style.width = '0%';
   showScreen('transfer');
 
   await fetch('/api/transfer/start', {
@@ -314,10 +338,18 @@ function openWebSocket() {
 
 function handleWsMessage(msg) {
   switch (msg.type) {
+    case 'scan':     showScanResult(msg);    break;
     case 'progress': updateProgress(msg);    break;
     case 'conflict': showConflict(msg);      break;
     case 'complete': showSummary(msg);       break;
   }
+}
+
+function showScanResult({ total }) {
+  document.getElementById('transfer-title').textContent = t('transfer.title');
+  const foundEl = document.getElementById('transfer-found');
+  foundEl.textContent = t('transfer.found', { total });
+  foundEl.hidden = false;
 }
 
 function updateProgress({ current, total, filename }) {

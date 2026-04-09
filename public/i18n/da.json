@@ -41,7 +41,9 @@
     "selectPaths": "Vælg venligst både en kildemappe på telefonen og en destinationsmappe på denne computer, inden du starter."
   },
   "transfer": {
+    "scanning": "Søger efter filer på telefonen...",
     "title": "Kopierer filer...",
+    "found": "Fandt {total} filer på telefonen",
     "fileOf": "Fil {current} af {total}",
     "conflict": {
       "title": "Filen eksisterer allerede",
