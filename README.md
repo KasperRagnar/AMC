@@ -6,14 +6,27 @@ The app runs entirely on your local machine. Open it via a start script, a brows
 
 ---
 
+## Screenshots
+
+| Connect | Setup |
+|---------|-------|
+| ![Connect screen](docs/screenshots/connect.png) | ![Setup screen](docs/screenshots/setup.png) |
+
+| Transfer | Summary |
+|----------|---------|
+| ![Transfer screen](docs/screenshots/transfer.png) | ![Summary screen](docs/screenshots/summary.png) |
+
+---
+
 ## How it works
 
 1. Connect your Android phone via USB
 2. Run the start script for your platform (see below)
 3. A browser tab opens at `http://localhost:3000`
-4. Select what to copy (images, videos, or both), pick the source folder on your phone and a destination on your computer
-5. Click **Start Copy** — files are sorted into `Year/Month/Day` folders automatically using EXIF data
-6. Close the tab when done — the app shuts itself down
+4. Click **Scan for device** — the app detects your phone automatically
+5. Select what to copy (images, videos, or both), pick the source folder on your phone and a destination on your computer
+6. Click **Start Copy** — the app scans your phone, then copies files sorted into `Year/Month/Day` folders using EXIF data
+7. Close the tab when done — the app shuts itself down
 
 ---
 
@@ -55,7 +68,7 @@ After that, the browser opens automatically and the app is ready.
 
 ## Enable USB Debugging on your phone
 
-The app includes a step-by-step guide, but here is the short version:
+The app includes a step-by-step guide on the connect screen, but here is the short version:
 
 1. Open **Settings** → **About Phone**
 2. Tap **Build Number** 7 times until you see *"Developer options unlocked"*
@@ -80,13 +93,15 @@ Destination/
     photo_no_date.jpg
 ```
 
-The date is read from EXIF data embedded in the file. If no EXIF data is present, the file modification date reported by the phone is used. Files with no date information at all are placed in the `Unknown/` folder.
+The date is read from EXIF data embedded in the file. If no EXIF data is present, the file modification date reported by the phone is used. Files with no date at all go into `Unknown/`.
+
+Deleted files (items in the phone's trash, e.g. `.trashed-*`) are automatically excluded and never copied.
 
 ---
 
 ## Conflict handling
 
-If a file with the same name already exists at the destination, a dialog appears with these options:
+If a file with the same name already exists at the destination, a dialog appears:
 
 | Option | Behaviour |
 |--------|-----------|
@@ -94,6 +109,18 @@ If a file with the same name already exists at the destination, a dialog appears
 | Skip All | Skip all remaining conflicts automatically |
 | Overwrite | Replace the existing file with the one from the phone |
 | Overwrite All | Replace all remaining conflicts automatically |
+
+---
+
+## Cancelling a transfer
+
+A **Cancel** button is shown at the bottom of the screen while files are being copied. Pressing it stops the transfer immediately and shows a summary of how many files were copied before cancelling.
+
+---
+
+## If your phone is unplugged
+
+If the USB cable is disconnected at any point after the phone has been detected — on the setup screen or during a transfer — the app shows an error screen explaining what happened. Pressing **OK** takes you back to the connect screen where you can plug back in and scan again.
 
 ---
 
@@ -134,7 +161,7 @@ src/
     TransferService.ts    Transfer orchestration and event emission
   routes/
     device.ts             GET /api/device/status, /api/device/browse
-    filesystem.ts         GET /api/filesystem/roots, /api/filesystem/browse
+    filesystem.ts         GET /api/filesystem/roots, /api/filesystem/browse, /api/filesystem/home
     transfer.ts           POST /api/transfer/start|resolve|cancel
 public/
   index.html              Single-page app
@@ -143,6 +170,8 @@ public/
   i18n/                   Localisation strings (en / da / es)
 scripts/
   setup.js                Downloads ADB binaries from Google
+docs/
+  screenshots/            App screenshots used in this README
 ```
 
 ### Adding a language

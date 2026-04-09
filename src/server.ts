@@ -10,6 +10,18 @@ import { createTransferRouter } from './routes/transfer';
 const PORT = 3000;
 const app = express();
 
+// Pending shutdown timer — cancelled if any new request arrives within the grace period.
+// This prevents a hard-refresh (which fires beforeunload) from killing the server.
+let shutdownTimer: ReturnType<typeof setTimeout> | null = null;
+
+app.use((_req, _res, next) => {
+  if (shutdownTimer) {
+    clearTimeout(shutdownTimer);
+    shutdownTimer = null;
+  }
+  next();
+});
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -30,13 +42,16 @@ app.use('/api/device', deviceRouter);
 app.use('/api/filesystem', filesystemRouter);
 app.use('/api/transfer', createTransferRouter(() => activeWs));
 
-// Called by the browser via sendBeacon() when the tab is closed
+// Called by the browser via sendBeacon() when the tab is closed (or refreshed).
+// We wait 5 seconds before actually shutting down — if the browser sends any
+// new request within that window (e.g. after a hard-refresh) the timer is
+// cancelled by the middleware above and the server keeps running.
 app.post('/api/shutdown', (_req, res) => {
   res.json({ ok: true });
-  setTimeout(() => {
+  shutdownTimer = setTimeout(() => {
     server.close();
     process.exit(0);
-  }, 300);
+  }, 5000);
 });
 
 server.listen(PORT, () => {

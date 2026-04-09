@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Error screen OK button
   document.getElementById('btn-error-ok').addEventListener('click', () => {
+    stopDeviceWatch();
     showScreen('connect');
     checkDevice();
   });
@@ -128,15 +129,50 @@ function showScreen(name) {
 }
 
 // ─── Device scanning ───────────────────────────────────────────────────────────
-// No automatic polling. One scan runs at startup; after that the user must
-// press "Scan for device" to trigger another check.
+// One scan fires at startup (connect screen). After the device is confirmed,
+// a background watch runs on every screen except Connect, Summary and Error
+// so that unplugging the phone is caught and shown as an error.
 
 function startDevicePolling() {
   checkDevice();
 }
 
 function stopDevicePolling() {
-  // nothing to stop — no interval running
+  // nothing to stop — initial scan has no interval
+}
+
+// ─── Background device watch ────────────────────────────────────────────────────
+let deviceWatchTimer = null;
+
+function startDeviceWatch() {
+  stopDeviceWatch();
+  deviceWatchTimer = setInterval(async () => {
+    // Only watch when the user is on a screen where losing the device matters
+    const screen = state.currentScreen;
+    if (screen === 'connect' || screen === 'summary' || screen === 'error') return;
+
+    try {
+      const res = await fetch('/api/device/status');
+      if (!res.ok) { onDeviceLost(); return; }
+      const { status } = await res.json();
+      if (status !== 'connected') onDeviceLost();
+    } catch {
+      // Server unreachable — treat as lost only if we were mid-flow
+      if (screen === 'setup') onDeviceLost();
+    }
+  }, 2000);
+}
+
+function stopDeviceWatch() {
+  clearInterval(deviceWatchTimer);
+  deviceWatchTimer = null;
+}
+
+function onDeviceLost() {
+  stopDeviceWatch();
+  // Cancel any running transfer silently before showing the error
+  fetch('/api/transfer/cancel', { method: 'POST' }).catch(() => {});
+  showError(t('error.disconnected'));
 }
 
 async function checkDevice() {
@@ -148,7 +184,10 @@ async function checkDevice() {
 
     if (status === 'connected' && state.currentScreen === 'connect') {
       // Brief pause so the user sees the "connected" confirmation
-      setTimeout(() => showScreen('setup'), 900);
+      setTimeout(() => {
+        showScreen('setup');
+        startDeviceWatch();
+      }, 900);
     }
   } catch {
     // Server not yet ready — show disconnected so the scan button is actionable
@@ -405,6 +444,7 @@ function showSummary({ copied, skipped, errors }) {
   document.getElementById('sum-skipped').textContent = skipped;
   document.getElementById('sum-errors').textContent  = errors;
 
+  stopDeviceWatch();
   if (state.ws) { state.ws.close(); state.ws = null; }
 
   showScreen('summary');
@@ -427,6 +467,7 @@ function resetToStart() {
   document.getElementById('transfer-filename').textContent = '';
   document.getElementById('setup-hint').hidden = true;
 
+  stopDeviceWatch();
   showScreen('connect');
   startDevicePolling();
 }
