@@ -109,17 +109,16 @@ function showScreen(name) {
   document.getElementById(`screen-${name}`).hidden = false;
 }
 
-// ─── Device polling ────────────────────────────────────────────────────────────
-let pollTimer = null;
+// ─── Device scanning ───────────────────────────────────────────────────────────
+// No automatic polling. One scan runs at startup; after that the user must
+// press "Scan for device" to trigger another check.
 
 function startDevicePolling() {
   checkDevice();
-  pollTimer = setInterval(checkDevice, 1000);
 }
 
 function stopDevicePolling() {
-  clearInterval(pollTimer);
-  pollTimer = null;
+  // nothing to stop — no interval running
 }
 
 async function checkDevice() {
@@ -130,7 +129,6 @@ async function checkDevice() {
     updateConnectScreen(status);
 
     if (status === 'connected' && state.currentScreen === 'connect') {
-      stopDevicePolling();
       // Brief pause so the user sees the "connected" confirmation
       setTimeout(() => showScreen('setup'), 900);
     }
