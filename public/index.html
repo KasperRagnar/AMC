@@ -61,7 +61,6 @@
           <p class="hint" data-i18n="connect.disconnectedHint">
             Please connect your Android phone to this computer via USB cable.
           </p>
-          <button id="btn-scan" class="btn-secondary" data-i18n="connect.scan">Scan for device</button>
         </div>
 
         <div id="state-unauthorized" class="device-state" hidden>
@@ -79,11 +78,15 @@
 
         <div id="state-adb-not-found" class="device-state" hidden>
           <div class="status-badge danger">&#215;</div>
-          <h2 data-i18n="connect.adbNotFound">ADB not installed</h2>
+          <h2 data-i18n="connect.adbNotFound">ADB not found</h2>
           <p class="hint" data-i18n="connect.adbNotFoundHint">
             Android Debug Bridge (ADB) was not found. Please install Android Platform Tools
             and make sure "adb" is in your system PATH.
           </p>
+        </div>
+
+        <div class="scan-row">
+          <button id="btn-scan" class="btn-secondary" data-i18n="connect.scan">Scan for device</button>
         </div>
 
         <details id="adb-guide">

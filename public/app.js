@@ -72,7 +72,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-overwrite-all').addEventListener('click', () => resolveConflict('overwrite-all'));
 
   // Scan button on connect screen
-  document.getElementById('btn-scan').addEventListener('click', checkDevice);
+  document.getElementById('btn-scan').addEventListener('click', () => {
+    updateConnectScreen('checking');
+    checkDevice();
+  });
 
   // Summary OK button
   document.getElementById('btn-ok').addEventListener('click', resetToStart);
@@ -111,7 +114,7 @@ let pollTimer = null;
 
 function startDevicePolling() {
   checkDevice();
-  pollTimer = setInterval(checkDevice, 2000);
+  pollTimer = setInterval(checkDevice, 1000);
 }
 
 function stopDevicePolling() {
@@ -122,6 +125,7 @@ function stopDevicePolling() {
 async function checkDevice() {
   try {
     const res = await fetch('/api/device/status');
+    if (!res.ok) { updateConnectScreen('disconnected'); return; }
     const { status } = await res.json();
     updateConnectScreen(status);
 
@@ -131,7 +135,8 @@ async function checkDevice() {
       setTimeout(() => showScreen('setup'), 900);
     }
   } catch {
-    // Server may still be starting — silently retry
+    // Server not yet ready — show disconnected so the scan button is actionable
+    updateConnectScreen('disconnected');
   }
 }
 

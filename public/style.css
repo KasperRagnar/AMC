@@ -167,6 +167,12 @@ main {
 
 .device-state h2 { font-size: 1.05rem; font-weight: 600; }
 
+.scan-row {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+}
+
 .hint {
   font-size: 0.83rem;
   color: var(--muted);
