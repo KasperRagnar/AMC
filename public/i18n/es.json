@@ -1,0 +1,71 @@
+{
+  "appTitle": "AMC Transfer",
+  "language": "Idioma",
+  "steps": {
+    "connect": "Conectar",
+    "setup": "Configurar",
+    "transfer": "Transferir",
+    "summary": "Resumen"
+  },
+  "connect": {
+    "checking": "Buscando dispositivo conectado...",
+    "disconnected": "No se detectó ningún teléfono Android",
+    "disconnectedHint": "Por favor, conecta tu teléfono Android a este ordenador mediante un cable USB.",
+    "scan": "Buscar dispositivo",
+    "unauthorized": "Teléfono encontrado, pero no autorizado",
+    "unauthorizedHint": "Revisa la pantalla de tu teléfono y toca \"Permitir\" para autorizar la depuración USB.",
+    "connected": "¡Teléfono conectado!",
+    "adbNotFound": "ADB no está instalado",
+    "adbNotFoundHint": "No se encontró Android Debug Bridge (ADB). Por favor, instala Android Platform Tools y asegúrate de que \"adb\" esté en el PATH de tu sistema.",
+    "guideTitle": "Cómo activar la depuración USB",
+    "guideSteps": [
+      "En tu teléfono, abre Ajustes y ve a \"Acerca del teléfono\".",
+      "Toca \"Número de compilación\" 7 veces — verás un mensaje indicando que las Opciones de desarrollador están desbloqueadas.",
+      "Vuelve a Ajustes y abre \"Opciones de desarrollador\".",
+      "Activa \"Depuración USB\".",
+      "Conecta tu teléfono a este ordenador mediante USB.",
+      "Cuando aparezca un diálogo en tu teléfono pidiendo permitir la depuración USB, toca \"Permitir\"."
+    ]
+  },
+  "setup": {
+    "title": "¿Qué deseas copiar?",
+    "images": "Imágenes",
+    "videos": "Vídeos",
+    "both": "Imágenes y Vídeos",
+    "sourceLabel": "Carpeta de origen en el teléfono",
+    "sourcePlaceholder": "Ninguna carpeta seleccionada",
+    "destLabel": "Destino en este ordenador",
+    "destPlaceholder": "Ninguna carpeta seleccionada",
+    "browse": "Examinar",
+    "startButton": "Iniciar copia",
+    "selectPaths": "Por favor, selecciona una carpeta de origen en el teléfono y una carpeta de destino en este ordenador antes de empezar."
+  },
+  "transfer": {
+    "title": "Copiando archivos...",
+    "fileOf": "Archivo {current} de {total}",
+    "conflict": {
+      "title": "El archivo ya existe",
+      "message": "\"{filename}\" ya existe en el destino.",
+      "skip": "Omitir",
+      "skipAll": "Omitir todo",
+      "overwrite": "Sobrescribir",
+      "overwriteAll": "Sobrescribir todo"
+    }
+  },
+  "summary": {
+    "title": "Transferencia completa",
+    "copied": "Archivos copiados",
+    "skipped": "Archivos omitidos",
+    "errors": "Errores",
+    "ok": "Volver al inicio"
+  },
+  "browser": {
+    "titlePhone": "Seleccionar carpeta de origen en el teléfono",
+    "titleLocal": "Seleccionar carpeta de destino",
+    "select": "Seleccionar esta carpeta",
+    "cancel": "Cancelar",
+    "loading": "Cargando...",
+    "empty": "No hay subcarpetas aquí",
+    "goUp": "Subir"
+  }
+}

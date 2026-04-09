@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMC Transfer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header>
+    <span class="logo" data-i18n="appTitle">AMC Transfer</span>
+    <div class="lang-wrap">
+      <label for="lang-select" data-i18n="language">Language</label>
+      <select id="lang-select">
+        <option value="en">English</option>
+        <option value="da">Dansk</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- ── Step indicator ─────────────────────────────────────────────────── -->
+  <nav id="steps-nav">
+    <div class="step active" id="step-connect">
+      <span class="step-num">1</span>
+      <span class="step-label" data-i18n="steps.connect">Connect</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step-setup">
+      <span class="step-num">2</span>
+      <span class="step-label" data-i18n="steps.setup">Setup</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step-transfer">
+      <span class="step-num">3</span>
+      <span class="step-label" data-i18n="steps.transfer">Transfer</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step-summary">
+      <span class="step-num">4</span>
+      <span class="step-label" data-i18n="steps.summary">Summary</span>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ── Screen 1: Connect ─────────────────────────────────────────────── -->
+    <section id="screen-connect" class="screen">
+      <div class="card">
+
+        <div id="state-checking" class="device-state">
+          <div class="spinner"></div>
+          <p data-i18n="connect.checking">Checking for connected device...</p>
+        </div>
+
+        <div id="state-disconnected" class="device-state" hidden>
+          <div class="status-badge neutral">?</div>
+          <h2 data-i18n="connect.disconnected">No Android phone detected</h2>
+          <p class="hint" data-i18n="connect.disconnectedHint">
+            Please connect your Android phone to this computer via USB cable.
+          </p>
+          <button id="btn-scan" class="btn-secondary" data-i18n="connect.scan">Scan for device</button>
+        </div>
+
+        <div id="state-unauthorized" class="device-state" hidden>
+          <div class="status-badge warning">!</div>
+          <h2 data-i18n="connect.unauthorized">Phone found, but not authorized</h2>
+          <p class="hint" data-i18n="connect.unauthorizedHint">
+            Check your phone screen and tap "Allow" to authorize USB debugging.
+          </p>
+        </div>
+
+        <div id="state-connected" class="device-state" hidden>
+          <div class="status-badge success">&#10003;</div>
+          <h2 data-i18n="connect.connected">Phone connected!</h2>
+        </div>
+
+        <div id="state-adb-not-found" class="device-state" hidden>
+          <div class="status-badge danger">&#215;</div>
+          <h2 data-i18n="connect.adbNotFound">ADB not installed</h2>
+          <p class="hint" data-i18n="connect.adbNotFoundHint">
+            Android Debug Bridge (ADB) was not found. Please install Android Platform Tools
+            and make sure "adb" is in your system PATH.
+          </p>
+        </div>
+
+        <details id="adb-guide">
+          <summary data-i18n="connect.guideTitle">How to enable USB debugging</summary>
+          <ol id="adb-steps"></ol>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- ── Screen 2: Setup ───────────────────────────────────────────────── -->
+    <section id="screen-setup" class="screen" hidden>
+      <div class="card">
+
+        <h2 data-i18n="setup.title">What would you like to copy?</h2>
+
+        <div class="type-buttons">
+          <button class="type-btn" data-value="images" data-i18n="setup.images">Images</button>
+          <button class="type-btn" data-value="videos" data-i18n="setup.videos">Videos</button>
+          <button class="type-btn active" data-value="both" data-i18n="setup.both">Images &amp; Videos</button>
+        </div>
+
+        <div class="path-row">
+          <div class="path-info">
+            <label data-i18n="setup.sourceLabel">Source folder on phone</label>
+            <span id="source-path" class="path-display empty"></span>
+          </div>
+          <button class="btn-secondary" id="btn-browse-phone" data-i18n="setup.browse">Browse</button>
+        </div>
+
+        <div class="path-row">
+          <div class="path-info">
+            <label data-i18n="setup.destLabel">Destination on this computer</label>
+            <span id="dest-path" class="path-display empty"></span>
+          </div>
+          <button class="btn-secondary" id="btn-browse-local" data-i18n="setup.browse">Browse</button>
+        </div>
+
+        <p id="setup-hint" class="hint" hidden data-i18n="setup.selectPaths"></p>
+        <button id="btn-start" class="btn-primary" data-i18n="setup.startButton">Start Copy</button>
+
+      </div>
+    </section>
+
+    <!-- ── Screen 3: Transfer ────────────────────────────────────────────── -->
+    <section id="screen-transfer" class="screen" hidden>
+      <div class="card">
+        <h2 data-i18n="transfer.title">Copying files...</h2>
+        <p id="transfer-count" class="transfer-count"></p>
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <p id="transfer-filename" class="transfer-filename"></p>
+      </div>
+    </section>
+
+    <!-- ── Screen 4: Summary ─────────────────────────────────────────────── -->
+    <section id="screen-summary" class="screen" hidden>
+      <div class="card">
+        <h2 data-i18n="summary.title">Transfer Complete</h2>
+        <div class="summary-grid">
+          <div class="summary-item success">
+            <span id="sum-copied" class="summary-num">0</span>
+            <span data-i18n="summary.copied">Files copied</span>
+          </div>
+          <div class="summary-item">
+            <span id="sum-skipped" class="summary-num">0</span>
+            <span data-i18n="summary.skipped">Files skipped</span>
+          </div>
+          <div class="summary-item danger">
+            <span id="sum-errors" class="summary-num">0</span>
+            <span data-i18n="summary.errors">Errors</span>
+          </div>
+        </div>
+        <button id="btn-ok" class="btn-primary" data-i18n="summary.ok">Back to Start</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Browser modal ────────────────────────────────────────────────────── -->
+  <div id="modal-browser" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="browser-title"></h3>
+        <button class="modal-close" id="btn-browser-close" aria-label="Close">&times;</button>
+      </div>
+      <div id="browser-path-bar" class="browser-path-bar"></div>
+      <div id="browser-list" class="browser-list"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-browser-cancel" data-i18n="browser.cancel">Cancel</button>
+        <button class="btn-primary"   id="btn-browser-select" data-i18n="browser.select">Select this folder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Conflict modal ───────────────────────────────────────────────────── -->
+  <div id="modal-conflict" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3 data-i18n="transfer.conflict.title">File already exists</h3>
+      </div>
+      <div class="conflict-body">
+        <p id="conflict-message"></p>
+      </div>
+      <div class="modal-footer conflict-footer">
+        <button class="btn-secondary" id="btn-skip"          data-i18n="transfer.conflict.skip">Skip</button>
+        <button class="btn-secondary" id="btn-skip-all"      data-i18n="transfer.conflict.skipAll">Skip All</button>
+        <button class="btn-primary"   id="btn-overwrite"     data-i18n="transfer.conflict.overwrite">Overwrite</button>
+        <button class="btn-primary"   id="btn-overwrite-all" data-i18n="transfer.conflict.overwriteAll">Overwrite All</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

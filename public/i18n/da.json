@@ -1,0 +1,71 @@
+{
+  "appTitle": "AMC Transfer",
+  "language": "Sprog",
+  "steps": {
+    "connect": "Tilslut",
+    "setup": "Opsætning",
+    "transfer": "Overfør",
+    "summary": "Opsummering"
+  },
+  "connect": {
+    "checking": "Søger efter tilsluttet enhed...",
+    "disconnected": "Ingen Android-telefon fundet",
+    "disconnectedHint": "Tilslut venligst din Android-telefon til denne computer via USB-kabel.",
+    "scan": "Søg efter enhed",
+    "unauthorized": "Telefon fundet, men ikke godkendt",
+    "unauthorizedHint": "Tjek din telefonskærm og tryk på \"Tillad\" for at godkende USB-fejlfinding.",
+    "connected": "Telefon tilsluttet!",
+    "adbNotFound": "ADB er ikke installeret",
+    "adbNotFoundHint": "Android Debug Bridge (ADB) blev ikke fundet. Installer venligst Android Platform Tools og sørg for, at \"adb\" er tilgængeligt i dit systems PATH.",
+    "guideTitle": "Sådan aktiverer du USB-fejlfinding",
+    "guideSteps": [
+      "Åbn Indstillinger på din telefon og gå til \"Om telefonen\".",
+      "Tryk på \"Buildnummer\" 7 gange — du vil se en besked om, at Udviklermuligheder nu er låst op.",
+      "Gå tilbage til Indstillinger og åbn \"Udviklermuligheder\".",
+      "Aktivér \"USB-fejlfinding\".",
+      "Tilslut din telefon til denne computer via USB.",
+      "Når der vises en dialog på din telefon om at tillade USB-fejlfinding, tryk på \"Tillad\"."
+    ]
+  },
+  "setup": {
+    "title": "Hvad vil du kopiere?",
+    "images": "Billeder",
+    "videos": "Videoer",
+    "both": "Billeder & Videoer",
+    "sourceLabel": "Kildemappe på telefonen",
+    "sourcePlaceholder": "Ingen mappe valgt",
+    "destLabel": "Destination på denne computer",
+    "destPlaceholder": "Ingen mappe valgt",
+    "browse": "Gennemse",
+    "startButton": "Start kopiering",
+    "selectPaths": "Vælg venligst både en kildemappe på telefonen og en destinationsmappe på denne computer, inden du starter."
+  },
+  "transfer": {
+    "title": "Kopierer filer...",
+    "fileOf": "Fil {current} af {total}",
+    "conflict": {
+      "title": "Filen eksisterer allerede",
+      "message": "\"{filename}\" findes allerede på destinationen.",
+      "skip": "Spring over",
+      "skipAll": "Spring alle over",
+      "overwrite": "Overskriv",
+      "overwriteAll": "Overskriv alle"
+    }
+  },
+  "summary": {
+    "title": "Overførsel fuldført",
+    "copied": "Filer kopieret",
+    "skipped": "Filer sprunget over",
+    "errors": "Fejl",
+    "ok": "Tilbage til start"
+  },
+  "browser": {
+    "titlePhone": "Vælg kildemappe på telefonen",
+    "titleLocal": "Vælg destinationsmappe",
+    "select": "Vælg denne mappe",
+    "cancel": "Annuller",
+    "loading": "Indlæser...",
+    "empty": "Ingen undermapper her",
+    "goUp": "Gå op"
+  }
+}

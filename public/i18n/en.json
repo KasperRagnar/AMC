@@ -1,0 +1,71 @@
+{
+  "appTitle": "AMC Transfer",
+  "language": "Language",
+  "steps": {
+    "connect": "Connect",
+    "setup": "Setup",
+    "transfer": "Transfer",
+    "summary": "Summary"
+  },
+  "connect": {
+    "checking": "Checking for connected device...",
+    "disconnected": "No Android phone detected",
+    "disconnectedHint": "Please connect your Android phone to this computer via USB cable.",
+    "scan": "Scan for device",
+    "unauthorized": "Phone found, but not authorized",
+    "unauthorizedHint": "Check your phone screen and tap \"Allow\" to authorize USB debugging.",
+    "connected": "Phone connected!",
+    "adbNotFound": "ADB not installed",
+    "adbNotFoundHint": "Android Debug Bridge (ADB) was not found. Please install Android Platform Tools and make sure \"adb\" is in your system PATH.",
+    "guideTitle": "How to enable USB debugging",
+    "guideSteps": [
+      "On your phone, open Settings and go to \"About Phone\".",
+      "Tap \"Build number\" 7 times — you will see a message that Developer Options are now unlocked.",
+      "Go back to Settings and open \"Developer Options\".",
+      "Enable \"USB Debugging\".",
+      "Connect your phone to this computer via USB.",
+      "When a dialog appears on your phone asking to allow USB debugging, tap \"Allow\"."
+    ]
+  },
+  "setup": {
+    "title": "What would you like to copy?",
+    "images": "Images",
+    "videos": "Videos",
+    "both": "Images & Videos",
+    "sourceLabel": "Source folder on phone",
+    "sourcePlaceholder": "No folder selected",
+    "destLabel": "Destination on this computer",
+    "destPlaceholder": "No folder selected",
+    "browse": "Browse",
+    "startButton": "Start Copy",
+    "selectPaths": "Please select both a source folder on the phone and a destination folder on this computer before starting."
+  },
+  "transfer": {
+    "title": "Copying files...",
+    "fileOf": "File {current} of {total}",
+    "conflict": {
+      "title": "File already exists",
+      "message": "\"{filename}\" already exists at the destination.",
+      "skip": "Skip",
+      "skipAll": "Skip All",
+      "overwrite": "Overwrite",
+      "overwriteAll": "Overwrite All"
+    }
+  },
+  "summary": {
+    "title": "Transfer Complete",
+    "copied": "Files copied",
+    "skipped": "Files skipped",
+    "errors": "Errors",
+    "ok": "Back to Start"
+  },
+  "browser": {
+    "titlePhone": "Select source folder on phone",
+    "titleLocal": "Select destination folder",
+    "select": "Select this folder",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "empty": "No subfolders here",
+    "goUp": "Go up"
+  }
+}
