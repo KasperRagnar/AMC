@@ -141,6 +141,7 @@
           <div id="progress-fill" class="progress-fill"></div>
         </div>
         <p id="transfer-filename" class="transfer-filename"></p>
+        <button id="btn-cancel" class="btn-secondary btn-cancel" data-i18n="transfer.cancel">Cancel</button>
       </div>
     </section>
 
@@ -163,6 +164,18 @@
           </div>
         </div>
         <button id="btn-ok" class="btn-primary" data-i18n="summary.ok">Back to Start</button>
+      </div>
+    </section>
+
+    <!-- ── Screen 5: Error ──────────────────────────────────────────────── -->
+    <section id="screen-error" class="screen" hidden>
+      <div class="card">
+        <div class="error-state">
+          <div class="status-badge danger">!</div>
+          <h2 data-i18n="error.title">Something went wrong</h2>
+          <p id="error-message" class="hint"></p>
+        </div>
+        <button id="btn-error-ok" class="btn-primary" data-i18n="error.ok">OK</button>
       </div>
     </section>
 

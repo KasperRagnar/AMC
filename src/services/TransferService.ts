@@ -87,7 +87,9 @@ export class TransferService extends EventEmitter {
     await this.files.ensureDir(tempDir);
 
     const allFiles = await this.adb.listFilesRecursive(sourceDir);
-    const filtered = allFiles.filter(f => this.matchesType(f, fileType));
+    const filtered = allFiles
+      .filter(f => this.matchesType(f, fileType))
+      .filter(f => !path.basename(f).startsWith('.trashed-'));
 
     // Tell the frontend how many files were found before copying begins
     this.emit('scan', { total: filtered.length });
@@ -149,7 +151,20 @@ export class TransferService extends EventEmitter {
 
         await this.moveToDest(tempPath, destPath);
         summary.copied++;
-      } catch {
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        const deviceGone =
+          msg.includes('no devices') ||
+          msg.includes('device offline') ||
+          msg.includes('device not found') ||
+          msg.includes('error: closed');
+
+        if (deviceGone) {
+          await this.files.deleteFile(tempPath);
+          this.emit('disconnect');
+          return;
+        }
+
         summary.errors++;
         await this.files.deleteFile(tempPath);
       }

@@ -84,6 +84,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkDevice();
   });
 
+  // Cancel button on transfer screen
+  document.getElementById('btn-cancel').addEventListener('click', cancelTransfer);
+
+  // Error screen OK button
+  document.getElementById('btn-error-ok').addEventListener('click', () => {
+    showScreen('connect');
+    checkDevice();
+  });
+
   // Summary OK button
   document.getElementById('btn-ok').addEventListener('click', resetToStart);
 
@@ -102,14 +111,16 @@ const STEPS = ['connect', 'setup', 'transfer', 'summary'];
 function showScreen(name) {
   state.currentScreen = name;
 
-  // Update step indicators
+  // Update step indicators only for screens that are part of the normal flow
   const activeIdx = STEPS.indexOf(name);
-  STEPS.forEach((step, i) => {
-    const el = document.getElementById(`step-${step}`);
-    el.classList.remove('active', 'done');
-    if (i < activeIdx)      el.classList.add('done');
-    else if (i === activeIdx) el.classList.add('active');
-  });
+  if (activeIdx !== -1) {
+    STEPS.forEach((step, i) => {
+      const el = document.getElementById(`step-${step}`);
+      el.classList.remove('active', 'done');
+      if (i < activeIdx)        el.classList.add('done');
+      else if (i === activeIdx) el.classList.add('active');
+    });
+  }
 
   // Show / hide screen sections
   document.querySelectorAll('.screen').forEach(s => { s.hidden = true; });
@@ -338,10 +349,11 @@ function openWebSocket() {
 
 function handleWsMessage(msg) {
   switch (msg.type) {
-    case 'scan':     showScanResult(msg);    break;
-    case 'progress': updateProgress(msg);    break;
-    case 'conflict': showConflict(msg);      break;
-    case 'complete': showSummary(msg);       break;
+    case 'scan':       showScanResult(msg);               break;
+    case 'progress':   updateProgress(msg);               break;
+    case 'conflict':   showConflict(msg);                 break;
+    case 'complete':   showSummary(msg);                  break;
+    case 'disconnect': showError(t('error.disconnected')); break;
   }
 }
 
@@ -358,6 +370,17 @@ function updateProgress({ current, total, filename }) {
   document.getElementById('transfer-filename').textContent = filename;
   const pct = total > 0 ? Math.round((current / total) * 100) : 0;
   document.getElementById('progress-fill').style.width = `${pct}%`;
+}
+
+async function cancelTransfer() {
+  await fetch('/api/transfer/cancel', { method: 'POST' });
+}
+
+// ─── Error screen ──────────────────────────────────────────────────────────────
+function showError(message) {
+  if (state.ws) { state.ws.close(); state.ws = null; }
+  document.getElementById('error-message').textContent = message;
+  showScreen('error');
 }
 
 // ─── Conflict modal ────────────────────────────────────────────────────────────

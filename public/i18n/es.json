@@ -45,6 +45,7 @@
     "title": "Copiando archivos...",
     "found": "Se encontraron {total} archivos en el teléfono",
     "fileOf": "Archivo {current} de {total}",
+    "cancel": "Cancelar",
     "conflict": {
       "title": "El archivo ya existe",
       "message": "\"{filename}\" ya existe en el destino.",
@@ -53,6 +54,11 @@
       "overwrite": "Sobrescribir",
       "overwriteAll": "Sobrescribir todo"
     }
+  },
+  "error": {
+    "title": "Algo salió mal",
+    "disconnected": "Tu teléfono se desconectó durante la transferencia. Vuelve a conectarlo e inténtalo de nuevo.",
+    "ok": "OK"
   },
   "summary": {
     "title": "Transferencia completa",

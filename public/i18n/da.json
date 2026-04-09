@@ -45,6 +45,7 @@
     "title": "Kopierer filer...",
     "found": "Fandt {total} filer på telefonen",
     "fileOf": "Fil {current} af {total}",
+    "cancel": "Annuller",
     "conflict": {
       "title": "Filen eksisterer allerede",
       "message": "\"{filename}\" findes allerede på destinationen.",
@@ -53,6 +54,11 @@
       "overwrite": "Overskriv",
       "overwriteAll": "Overskriv alle"
     }
+  },
+  "error": {
+    "title": "Noget gik galt",
+    "disconnected": "Din telefon blev frakoblet under overførslen. Tilslut den igen og prøv på ny.",
+    "ok": "OK"
   },
   "summary": {
     "title": "Overførsel fuldført",

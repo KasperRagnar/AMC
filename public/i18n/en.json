@@ -45,6 +45,7 @@
     "title": "Copying files...",
     "found": "Found {total} files on phone",
     "fileOf": "File {current} of {total}",
+    "cancel": "Cancel",
     "conflict": {
       "title": "File already exists",
       "message": "\"{filename}\" already exists at the destination.",
@@ -53,6 +54,11 @@
       "overwrite": "Overwrite",
       "overwriteAll": "Overwrite All"
     }
+  },
+  "error": {
+    "title": "Something went wrong",
+    "disconnected": "Your phone was disconnected during the transfer. Please reconnect it and try again.",
+    "ok": "OK"
   },
   "summary": {
     "title": "Transfer Complete",

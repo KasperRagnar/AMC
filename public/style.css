@@ -362,6 +362,21 @@ main {
   white-space: nowrap;
 }
 
+.btn-cancel {
+  display: block;
+  margin: 16px auto 0;
+}
+
+/* ─── Error screen ───────────────────────────────────────────────────────── */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 12px 0 20px;
+}
+
 /* ─── Summary screen ─────────────────────────────────────────────────────── */
 .summary-grid {
   display: flex;
