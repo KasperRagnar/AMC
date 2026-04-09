@@ -6,18 +6,6 @@ The app runs entirely on your local machine. Open it via a start script, a brows
 
 ---
 
-## Screenshots
-
-| Connect | Setup |
-|---------|-------|
-| ![Connect screen](docs/screenshots/connect.png) | ![Setup screen](docs/screenshots/setup.png) |
-
-| Transfer | Summary |
-|----------|---------|
-| ![Transfer screen](docs/screenshots/transfer.png) | ![Summary screen](docs/screenshots/summary.png) |
-
----
-
 ## How it works
 
 1. Connect your Android phone via USB
@@ -30,12 +18,26 @@ The app runs entirely on your local machine. Open it via a start script, a brows
 
 ---
 
+## Screenshots
+
+| Connect | Setup |
+|---------|-------|
+| ![Connect screen](docs/screenshots/connect.png) | ![Setup screen](docs/screenshots/setup.png) |
+
+| Transfer | Summary |
+|----------|---------|
+| ![Transfer screen](docs/screenshots/transfer.png) | ![Summary screen](docs/screenshots/summary.png) |
+
+---
+
 ## Requirements
 
 - A computer running Windows, macOS, or Linux
 - [Node.js](https://nodejs.org) installed (v18 or later)
 - An Android phone with **USB Debugging** enabled (the app walks you through this)
 - A USB cable
+
+**Windows only:** [Git for Windows](https://git-scm.com/download/win) is required to run `start.vbs`. If you already use Git Bash, you have it.
 
 > **ADB is included.** The app downloads Android Debug Bridge automatically on first launch. You do not need to install it yourself.
 
@@ -49,7 +51,7 @@ Download the ZIP from GitHub and extract it anywhere on your computer.
 
 ### 2. Run the start script
 
-**Windows** — double-click `start.vbs` (no terminal window) or `start.bat` (shows terminal, useful for troubleshooting).
+**Windows** — double-click `start.vbs`. A terminal window opens, the browser launches, and the terminal closes automatically when you close the browser tab. Use `start.bat` instead if you want to keep the terminal open for troubleshooting.
 
 **macOS / Linux** — open a terminal in the folder and run:
 

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Copy photos and videos from Android phone to local computer via ADB",
   "main": "dist/server.js",
+  "bin": "dist/server.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",

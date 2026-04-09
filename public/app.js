@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Shut down the server when the tab is closed
 window.addEventListener('beforeunload', () => {
+  stopDeviceWatch(); // prevent interval requests from cancelling the shutdown timer
   navigator.sendBeacon('/api/shutdown');
 });
 

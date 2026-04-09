@@ -14,8 +14,13 @@ const app = express();
 // This prevents a hard-refresh (which fires beforeunload) from killing the server.
 let shutdownTimer: ReturnType<typeof setTimeout> | null = null;
 
-app.use((_req, _res, next) => {
-  if (shutdownTimer) {
+// Cancel a pending shutdown when the browser makes a real request (e.g. hard-refresh).
+// Background polling (/api/device/status) is excluded — an in-flight poll that arrives
+// after the tab is closed must not prevent the server from shutting down.
+const BACKGROUND_PATHS = new Set(['/api/device/status']);
+
+app.use((req, _res, next) => {
+  if (shutdownTimer && !BACKGROUND_PATHS.has(req.path)) {
     clearTimeout(shutdownTimer);
     shutdownTimer = null;
   }
