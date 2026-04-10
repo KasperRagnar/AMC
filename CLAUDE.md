@@ -27,10 +27,10 @@ The server runs on `http://localhost:3000` (development) or the same port when l
 ### Distributing
 
 After `npm run dist`, the `release/` folder contains one self-contained executable per platform:
-- `amc-transfer-win.exe` — Windows x64 (double-click to run)
-- `amc-transfer-macos` — macOS Intel
-- `amc-transfer-macos-arm64` — macOS Apple Silicon
-- `amc-transfer-linux` — Linux x64
+- `amc-win.exe` — Windows x64 (double-click to run)
+- `amc-macos` — macOS Intel
+- `amc-macos-arm64` — macOS Apple Silicon
+- `amc-linux` — Linux x64
 
 Each executable includes Node.js, the app, the frontend, and the ADB binary for its platform. No installation required for the end user.
 

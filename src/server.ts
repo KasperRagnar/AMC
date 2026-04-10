@@ -61,7 +61,7 @@ app.post('/api/shutdown', (_req, res) => {
 
 server.listen(PORT, () => {
   const url = `http://localhost:${PORT}`;
-  console.log(`AMC Transfer running at ${url}`);
+  console.log(`Android Media Copier running at ${url}`);
   openBrowser(url);
 });
 

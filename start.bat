@@ -1,5 +1,5 @@
 @echo off
-title AMC Transfer
+title Android Media Copier
 cd /d "%~dp0"
 
 REM ── Locate Node.js ──────────────────────────────────────────────────────────

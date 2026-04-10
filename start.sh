@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run this script to start AMC Transfer on Linux or macOS.
+# Run this script to start Android Media Copier on Linux or macOS.
 # The browser opens automatically. Close the browser tab to stop the app.
 
 set -e

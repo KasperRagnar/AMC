@@ -73,6 +73,6 @@ export class FileService {
   }
 
   getTempDir(): string {
-    return path.join(os.tmpdir(), 'amc-transfer');
+    return path.join(os.tmpdir(), 'amc');
   }
 }

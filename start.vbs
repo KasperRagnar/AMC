@@ -1,4 +1,4 @@
-' Double-click this file on Windows to start AMC Transfer.
+' Double-click this file on Windows to start Android Media Copier.
 ' The browser opens automatically. The terminal closes when you close the browser tab.
 
 Set fso   = CreateObject("Scripting.FileSystemObject")

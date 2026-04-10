@@ -1,4 +1,4 @@
-# AMC Transfer
+# Android Media Copier (AMC)
 
 Copy photos and videos from your Android phone to your computer over USB — no account, no cloud, no cables except the one you already have.
 
@@ -162,10 +162,10 @@ After `npm run dist`, the `release/` folder contains one self-contained executab
 
 | File | Platform |
 |------|----------|
-| `amc-transfer-win.exe` | Windows x64 |
-| `amc-transfer-macos` | macOS Intel |
-| `amc-transfer-macos-arm64` | macOS Apple Silicon |
-| `amc-transfer-linux` | Linux x64 |
+| `amc-win.exe` | Windows x64 |
+| `amc-macos` | macOS Intel |
+| `amc-macos-arm64` | macOS Apple Silicon |
+| `amc-linux` | Linux x64 |
 
 Each executable includes Node.js, the app, and the ADB binary for its platform. End users need nothing installed.
 
