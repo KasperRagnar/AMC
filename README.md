@@ -140,15 +140,43 @@ Select your language from the dropdown in the top right corner. The choice is sa
 
 ## For developers
 
-```bash
-npm install
-npm run dev        # Run with ts-node (requires adb in PATH)
+### Build requirements
 
-npm run setup      # Download ADB binaries for all platforms (needed before dist)
+To compile this project you need the following installed on your machine:
+
+- **[Node.js](https://nodejs.org) v18 or later** — required to run the build scripts and TypeScript compiler
+- **npm** — comes bundled with Node.js
+- **Internet access** — `npm run setup` downloads ADB binaries from Google's servers (one time only)
+
+No other tools are required. ADB does not need to be installed system-wide; the setup script downloads it automatically.
+
+### Building
+
+```bash
+npm install        # Install dependencies
+npm run setup      # Download ADB binaries for all platforms (one time, needs internet)
 npm run dist       # Compile TypeScript + bundle into self-contained executables
 ```
 
-The `release/` folder after `npm run dist` contains one executable per platform — no Node.js or ADB installation required for end users.
+After `npm run dist`, the `release/` folder contains one self-contained executable per platform:
+
+| File | Platform |
+|------|----------|
+| `amc-transfer-win.exe` | Windows x64 |
+| `amc-transfer-macos` | macOS Intel |
+| `amc-transfer-macos-arm64` | macOS Apple Silicon |
+| `amc-transfer-linux` | Linux x64 |
+
+Each executable includes Node.js, the app, and the ADB binary for its platform. End users need nothing installed.
+
+> **Cross-compilation is supported.** You can build the Linux executable from Windows, and vice versa — `pkg` handles all platforms in a single `npm run dist` run.
+
+### Development (without packaging)
+
+```bash
+npm install
+npm run dev        # Run with ts-node (requires adb in PATH)
+```
 
 ### Project structure
 
