@@ -104,9 +104,26 @@
         <h2 data-i18n="setup.title">What would you like to copy?</h2>
 
         <div class="type-buttons">
-          <button class="type-btn" data-value="images" data-i18n="setup.images">Images</button>
-          <button class="type-btn" data-value="videos" data-i18n="setup.videos">Videos</button>
-          <button class="type-btn active" data-value="both" data-i18n="setup.both">Images &amp; Videos</button>
+          <button class="type-btn" data-group="fileType" data-value="images" data-i18n="setup.images">Images</button>
+          <button class="type-btn" data-group="fileType" data-value="videos" data-i18n="setup.videos">Videos</button>
+          <button class="type-btn active" data-group="fileType" data-value="both" data-i18n="setup.both">Images &amp; Videos</button>
+        </div>
+
+        <div class="type-buttons">
+          <button class="type-btn active" data-group="copyMode" data-value="allFiles" data-i18n="setup.modeAll">All files</button>
+          <button class="type-btn" data-group="copyMode" data-value="dateRange" data-i18n="setup.modeDateRange">Date range</button>
+        </div>
+
+        <div id="date-range-row" class="date-range-row" hidden>
+          <div class="date-field">
+            <label for="date-from" data-i18n="setup.dateFrom">From</label>
+            <input type="date" id="date-from">
+          </div>
+          <div class="date-field">
+            <label for="date-to" data-i18n="setup.dateTo">To</label>
+            <input type="date" id="date-to">
+          </div>
+          <p id="date-range-error" class="hint date-range-error" hidden></p>
         </div>
 
         <div class="path-row">

@@ -38,7 +38,13 @@
     "destPlaceholder": "No folder selected",
     "browse": "Browse",
     "startButton": "Start Copy",
-    "selectPaths": "Please select both a source folder on the phone and a destination folder on this computer before starting."
+    "selectPaths": "Please select both a source folder on the phone and a destination folder on this computer before starting.",
+    "modeAll": "All files",
+    "modeDateRange": "Date range",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "dateRangeError": "\"From\" date must not be after \"To\" date.",
+    "dateRangeRequired": "Please select both a from and to date."
   },
   "transfer": {
     "scanning": "Scanning phone for files...",

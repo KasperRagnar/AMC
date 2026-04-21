@@ -70,6 +70,36 @@ export class AdbService {
     }
   }
 
+  /**
+   * Returns a map of phone path → modification Date for each path in the input list.
+   * Groups files by parent directory and calls listDirectory() per unique dir —
+   * this reuses proven ls parsing and avoids the basename-vs-fullpath mismatch
+   * that occurs when ls -la is called with explicit full file paths on Android.
+   */
+  async getFileModTimes(phonePaths: string[]): Promise<Map<string, Date>> {
+    // Group full paths by their parent directory
+    const byDir = new Map<string, Set<string>>();
+    for (const p of phonePaths) {
+      const dir = p.substring(0, p.lastIndexOf('/'));
+      if (!byDir.has(dir)) byDir.set(dir, new Set());
+      byDir.get(dir)!.add(p);
+    }
+
+    const result = new Map<string, Date>();
+    for (const [dir, fileSet] of byDir) {
+      const entries = await this.listDirectory(dir);
+      for (const entry of entries) {
+        if (entry.date) {
+          const fullPath = `${dir}/${entry.name}`;
+          if (fileSet.has(fullPath)) {
+            result.set(fullPath, entry.date);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   async pullFile(phonePath: string, localPath: string): Promise<void> {
     await this.run(['pull', phonePath, localPath]);
   }

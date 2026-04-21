@@ -12,6 +12,8 @@ export interface TransferOptions {
   sourceDir: string;
   destDir: string;
   fileType: FileType;
+  dateFrom?: string;
+  dateTo?: string;
 }
 
 export interface ProgressEvent {
@@ -87,9 +89,19 @@ export class TransferService extends EventEmitter {
     await this.files.ensureDir(tempDir);
 
     const allFiles = await this.adb.listFilesRecursive(sourceDir);
-    const filtered = allFiles
+    let filtered = allFiles
       .filter(f => this.matchesType(f, fileType))
       .filter(f => !path.basename(f).startsWith('.trashed-'));
+
+    if (options.dateFrom && options.dateTo) {
+      const from = new Date(options.dateFrom + 'T00:00:00');
+      const to   = new Date(options.dateTo   + 'T23:59:59');
+      const modTimes = await this.adb.getFileModTimes(filtered);
+      filtered = filtered.filter(f => {
+        const d = modTimes.get(f);
+        return d != null && d >= from && d <= to;
+      });
+    }
 
     // Tell the frontend how many files were found before copying begins
     this.emit('scan', { total: filtered.length });

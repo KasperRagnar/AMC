@@ -536,3 +536,46 @@ main {
 }
 .conflict-footer .btn-primary,
 .conflict-footer .btn-secondary { width: auto; }
+
+/* ─── Date range row ─────────────────────────────────────────────────────── */
+.date-range-row[hidden] { display: none; }
+.date-range-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 12px 14px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.date-field label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+}
+
+.date-field input[type="date"] {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  width: 100%;
+}
+.date-field input[type="date"]:focus { border-color: var(--primary); }
+
+.date-range-error { color: var(--error); }

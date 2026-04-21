@@ -38,7 +38,13 @@
     "destPlaceholder": "Ingen mappe valgt",
     "browse": "Gennemse",
     "startButton": "Start kopiering",
-    "selectPaths": "Vælg venligst både en kildemappe på telefonen og en destinationsmappe på denne computer, inden du starter."
+    "selectPaths": "Vælg venligst både en kildemappe på telefonen og en destinationsmappe på denne computer, inden du starter.",
+    "modeAll": "Alle filer",
+    "modeDateRange": "Datointerval",
+    "dateFrom": "Fra",
+    "dateTo": "Til",
+    "dateRangeError": "\"Fra\"-dato må ikke være efter \"Til\"-dato.",
+    "dateRangeRequired": "Angiv venligst både en fra- og en til-dato."
   },
   "transfer": {
     "scanning": "Søger efter filer på telefonen...",

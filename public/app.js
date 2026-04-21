@@ -1,13 +1,16 @@
 // ─── State ────────────────────────────────────────────────────────────────────
 const state = {
   lang:        'en',
-  fileType:    'both',   // 'images' | 'videos' | 'both'
-  sourcePath:  null,     // selected phone path
-  destPath:    null,     // selected local path
-  browserMode: null,     // 'phone' | 'local'  (while modal is open)
-  browserPath: null,     // currently viewed path in browser modal
-  homeDir:     null,     // local user home directory (fetched from API)
-  ws:          null,     // active WebSocket during transfer
+  fileType:    'both',      // 'images' | 'videos' | 'both'
+  copyMode:    'allFiles',  // 'allFiles' | 'dateRange'
+  dateFrom:    null,        // 'YYYY-MM-DD' | null
+  dateTo:      null,        // 'YYYY-MM-DD' | null
+  sourcePath:  null,        // selected phone path
+  destPath:    null,        // selected local path
+  browserMode: null,        // 'phone' | 'local'  (while modal is open)
+  browserPath: null,        // currently viewed path in browser modal
+  homeDir:     null,        // local user home directory (fetched from API)
+  ws:          null,        // active WebSocket during transfer
 };
 
 // ─── i18n ──────────────────────────────────────────────────────────────────────
@@ -58,8 +61,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // File type buttons
-  document.querySelectorAll('.type-btn').forEach(btn => {
+  document.querySelectorAll('[data-group="fileType"]').forEach(btn => {
     btn.addEventListener('click', () => selectFileType(btn.dataset.value));
+  });
+
+  // Copy mode buttons
+  document.querySelectorAll('[data-group="copyMode"]').forEach(btn => {
+    btn.addEventListener('click', () => selectCopyMode(btn.dataset.value));
+  });
+
+  // Date range inputs
+  document.getElementById('date-from').addEventListener('change', e => {
+    state.dateFrom = e.target.value || null;
+    validateDateRange();
+  });
+  document.getElementById('date-to').addEventListener('change', e => {
+    state.dateTo = e.target.value || null;
+    validateDateRange();
   });
 
   // Setup browse buttons
@@ -217,9 +235,33 @@ function renderAdbSteps() {
 // ─── Setup screen ──────────────────────────────────────────────────────────────
 function selectFileType(type) {
   state.fileType = type;
-  document.querySelectorAll('.type-btn').forEach(btn => {
+  document.querySelectorAll('[data-group="fileType"]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.value === type);
   });
+}
+
+function selectCopyMode(mode) {
+  state.copyMode = mode;
+  document.querySelectorAll('[data-group="copyMode"]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === mode);
+  });
+  document.getElementById('date-range-row').hidden = (mode !== 'dateRange');
+  if (mode !== 'dateRange') {
+    document.getElementById('date-range-error').hidden = true;
+  } else {
+    validateDateRange();
+  }
+}
+
+function validateDateRange() {
+  const errEl = document.getElementById('date-range-error');
+  if (state.dateFrom && state.dateTo && state.dateFrom > state.dateTo) {
+    errEl.textContent = t('setup.dateRangeError');
+    errEl.hidden = false;
+    return false;
+  }
+  errEl.hidden = true;
+  return true;
 }
 
 function refreshPathDisplays() {
@@ -356,6 +398,15 @@ async function startTransfer() {
     document.getElementById('setup-hint').hidden = false;
     return;
   }
+  if (state.copyMode === 'dateRange') {
+    if (!state.dateFrom || !state.dateTo) {
+      const errEl = document.getElementById('date-range-error');
+      errEl.textContent = t('setup.dateRangeRequired');
+      errEl.hidden = false;
+      return;
+    }
+    if (!validateDateRange()) return;
+  }
   document.getElementById('setup-hint').hidden = true;
 
   // Open WebSocket before starting — ensures events are not missed
@@ -368,14 +419,20 @@ async function startTransfer() {
   document.getElementById('progress-fill').style.width = '0%';
   showScreen('transfer');
 
+  const body = {
+    sourceDir: state.sourcePath,
+    destDir:   state.destPath,
+    fileType:  state.fileType,
+  };
+  if (state.copyMode === 'dateRange') {
+    body.dateFrom = state.dateFrom;
+    body.dateTo   = state.dateTo;
+  }
+
   await fetch('/api/transfer/start', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sourceDir: state.sourcePath,
-      destDir:   state.destPath,
-      fileType:  state.fileType,
-    }),
+    body: JSON.stringify(body),
   });
 }
 
@@ -456,12 +513,22 @@ function resetToStart() {
   state.sourcePath = null;
   state.destPath   = null;
   state.fileType   = 'both';
+  state.copyMode   = 'allFiles';
+  state.dateFrom   = null;
+  state.dateTo     = null;
 
   refreshPathDisplays();
 
-  document.querySelectorAll('.type-btn').forEach(btn => {
+  document.querySelectorAll('[data-group="fileType"]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.value === 'both');
   });
+  document.querySelectorAll('[data-group="copyMode"]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === 'allFiles');
+  });
+  document.getElementById('date-range-row').hidden = true;
+  document.getElementById('date-from').value = '';
+  document.getElementById('date-to').value   = '';
+  document.getElementById('date-range-error').hidden = true;
 
   document.getElementById('progress-fill').style.width = '0%';
   document.getElementById('transfer-count').textContent    = '';

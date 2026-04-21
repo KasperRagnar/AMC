@@ -26,11 +26,28 @@ export function createTransferRouter(getWs: () => WebSocket | null) {
   }
 
   router.post('/start', (req, res) => {
-    const options = req.body as TransferOptions;
+    const { sourceDir, destDir, fileType, dateFrom, dateTo } = req.body as TransferOptions & { dateFrom?: string; dateTo?: string };
 
-    if (!options.sourceDir || !options.destDir || !options.fileType) {
+    if (!sourceDir || !destDir || !fileType) {
       res.status(400).json({ error: 'sourceDir, destDir, and fileType are required' });
       return;
+    }
+
+    if ((dateFrom == null) !== (dateTo == null)) {
+      res.status(400).json({ error: 'Provide both dateFrom and dateTo, or neither' });
+      return;
+    }
+
+    const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+    if (dateFrom && dateTo) {
+      if (!ISO_DATE.test(dateFrom) || !ISO_DATE.test(dateTo)) {
+        res.status(400).json({ error: 'dateFrom and dateTo must be YYYY-MM-DD' });
+        return;
+      }
+      if (dateFrom > dateTo) {
+        res.status(400).json({ error: 'dateFrom must not be after dateTo' });
+        return;
+      }
     }
 
     // Cancel any running transfer before starting a new one
@@ -46,6 +63,10 @@ export function createTransferRouter(getWs: () => WebSocket | null) {
     // Respond immediately — transfer runs asynchronously
     res.json({ ok: true });
 
+    const options: TransferOptions = {
+      sourceDir, destDir, fileType,
+      ...(dateFrom && dateTo ? { dateFrom, dateTo } : {}),
+    };
     activeTransfer.start(options).catch(err => {
       send({ type: 'error', message: String(err) });
     });
