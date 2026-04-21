@@ -77,6 +77,7 @@ The app includes a step-by-step guide on the connect screen, but here is the sho
 3. Go back to **Settings** → **Developer Options**
 4. Enable **USB Debugging**
 5. Connect your phone via USB — tap **Allow** when prompted on the phone screen
+   > If you get prompted with multible USB options, chouse the one that allows filetransfers over USB.
 
 ---
 
@@ -222,3 +223,4 @@ docs/
 ## License
 
 MIT
+
