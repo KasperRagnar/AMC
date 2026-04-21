@@ -10,7 +10,7 @@
     "dev": "ts-node src/server.ts",
     "setup": "node scripts/setup.js",
     "setup:current": "node scripts/setup.js --current",
-    "dist": "npm run build && pkg ."
+    "dist": "npm run build && pkg . && node scripts/rename-release.js"
   },
   "dependencies": {
     "exifr": "^7.1.3",
