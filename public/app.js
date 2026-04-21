@@ -1,7 +1,7 @@
 // ─── State ────────────────────────────────────────────────────────────────────
 const state = {
   lang:        'en',
-  fileType:    'both',      // 'images' | 'videos' | 'both'
+  fileType:    'allTypes',      // 'images' | 'videos' | 'allTypes' | 'files' | 'music'
   copyMode:    'allFiles',  // 'allFiles' | 'dateRange'
   dateFrom:    null,        // 'YYYY-MM-DD' | null
   dateTo:      null,        // 'YYYY-MM-DD' | null
@@ -239,7 +239,7 @@ function selectFileType(type) {
     btn.classList.toggle('active', btn.dataset.value === type);
   });
 
-  const isFiles = type === 'files';
+  const isFiles = type === 'files' || type === 'music';
   document.querySelector('[data-group="copyMode"][data-value="allFiles"]').disabled = isFiles;
   document.querySelector('[data-group="copyMode"][data-value="dateRange"]').hidden  = isFiles;
 
@@ -521,7 +521,7 @@ function showSummary({ copied, skipped, errors }) {
 function resetToStart() {
   state.sourcePath = null;
   state.destPath   = null;
-  state.fileType   = 'both';
+  state.fileType   = 'allTypes';
   state.copyMode   = 'allFiles';
   state.dateFrom   = null;
   state.dateTo     = null;
@@ -529,7 +529,7 @@ function resetToStart() {
   refreshPathDisplays();
 
   document.querySelectorAll('[data-group="fileType"]').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.value === 'both');
+    btn.classList.toggle('active', btn.dataset.value === 'allTypes');
   });
   document.querySelectorAll('[data-group="copyMode"]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.value === 'allFiles');

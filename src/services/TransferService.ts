@@ -5,7 +5,7 @@ import { AdbService } from './AdbService';
 import { ExifService } from './ExifService';
 import { FileService } from './FileService';
 
-export type FileType = 'images' | 'videos' | 'both' | 'files';
+export type FileType = 'images' | 'videos' | 'allTypes' | 'files' | 'music';
 export type ConflictAction = 'skip' | 'overwrite' | 'skip-all' | 'overwrite-all';
 
 export interface TransferOptions {
@@ -51,6 +51,10 @@ const FILE_EXTENSIONS = new Set([
   '.txt', '.rtf', '.odt', '.ods', '.odp', '.csv',
   '.zip', '.rar', '.7z',
   '.epub', '.mobi',
+]);
+
+const MUSIC_EXTENSIONS = new Set([
+  '.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.opus', '.aiff',
 ]);
 
 /**
@@ -129,25 +133,27 @@ export class TransferService extends EventEmitter {
       try {
         await this.adb.pullFile(phonePath, tempPath);
 
-        const isFileType = fileType === 'files' ||
-          (fileType === 'both' && FILE_EXTENSIONS.has(path.extname(phonePath).toLowerCase()));
+        const ext = path.extname(phonePath).toLowerCase();
 
         let destFolder: string;
-        if (isFileType) {
+        if (FILE_EXTENSIONS.has(ext)) {
           destFolder = path.join(destDir, 'files');
+        } else if (MUSIC_EXTENSIONS.has(ext)) {
+          destFolder = path.join(destDir, 'music');
         } else {
-          // Date priority: EXIF → ADB ls date → Unknown folder
+          const typeFolder = VIDEO_EXTENSIONS.has(ext) ? 'videos' : 'images';
           const date =
             (await this.exif.getDate(tempPath)) ??
             (await this.adb.getFileDate(phonePath));
           destFolder = date
             ? path.join(
                 destDir,
+                typeFolder,
                 String(date.getFullYear()),
                 this.pad(date.getMonth() + 1),
                 this.pad(date.getDate()),
               )
-            : path.join(destDir, 'Unknown');
+            : path.join(destDir, typeFolder, 'Unknown');
         }
 
         await this.files.ensureDir(destFolder);
@@ -223,7 +229,9 @@ export class TransferService extends EventEmitter {
     if (fileType === 'images') return IMAGE_EXTENSIONS.has(ext);
     if (fileType === 'videos') return VIDEO_EXTENSIONS.has(ext);
     if (fileType === 'files')  return FILE_EXTENSIONS.has(ext);
-    return IMAGE_EXTENSIONS.has(ext) || VIDEO_EXTENSIONS.has(ext) || FILE_EXTENSIONS.has(ext);
+    if (fileType === 'music')  return MUSIC_EXTENSIONS.has(ext);
+    return IMAGE_EXTENSIONS.has(ext) || VIDEO_EXTENSIONS.has(ext)
+        || FILE_EXTENSIONS.has(ext)   || MUSIC_EXTENSIONS.has(ext);
   }
 
   private pad(n: number): string {
