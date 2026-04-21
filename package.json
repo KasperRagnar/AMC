@@ -1,6 +1,6 @@
 {
   "name": "amc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Copy photos and videos from Android phone to local computer via ADB",
   "main": "dist/server.js",
   "bin": "dist/server.js",
