@@ -238,6 +238,15 @@ function selectFileType(type) {
   document.querySelectorAll('[data-group="fileType"]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.value === type);
   });
+
+  const isFiles = type === 'files';
+  document.querySelector('[data-group="copyMode"][data-value="allFiles"]').disabled = isFiles;
+  document.querySelector('[data-group="copyMode"][data-value="dateRange"]').hidden  = isFiles;
+
+  // If date range was active when switching to Files, reset to all files
+  if (isFiles && state.copyMode === 'dateRange') {
+    selectCopyMode('allFiles');
+  }
 }
 
 function selectCopyMode(mode) {
@@ -525,6 +534,8 @@ function resetToStart() {
   document.querySelectorAll('[data-group="copyMode"]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.value === 'allFiles');
   });
+  document.querySelector('[data-group="copyMode"][data-value="allFiles"]').disabled = false;
+  document.querySelector('[data-group="copyMode"][data-value="dateRange"]').hidden  = false;
   document.getElementById('date-range-row').hidden = true;
   document.getElementById('date-from').value = '';
   document.getElementById('date-to').value   = '';

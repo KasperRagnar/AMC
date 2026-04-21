@@ -5,7 +5,7 @@ import { AdbService } from './AdbService';
 import { ExifService } from './ExifService';
 import { FileService } from './FileService';
 
-export type FileType = 'images' | 'videos' | 'both';
+export type FileType = 'images' | 'videos' | 'both' | 'files';
 export type ConflictAction = 'skip' | 'overwrite' | 'skip-all' | 'overwrite-all';
 
 export interface TransferOptions {
@@ -44,6 +44,13 @@ const IMAGE_EXTENSIONS = new Set([
 
 const VIDEO_EXTENSIONS = new Set([
   '.mp4', '.mov', '.avi', '.mkv', '.3gp', '.m4v', '.wmv', '.ts',
+]);
+
+const FILE_EXTENSIONS = new Set([
+  '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
+  '.txt', '.rtf', '.odt', '.ods', '.odp', '.csv',
+  '.zip', '.rar', '.7z',
+  '.epub', '.mobi',
 ]);
 
 /**
@@ -122,19 +129,26 @@ export class TransferService extends EventEmitter {
       try {
         await this.adb.pullFile(phonePath, tempPath);
 
-        // Date priority: EXIF → ADB ls date → Unknown folder
-        const date =
-          (await this.exif.getDate(tempPath)) ??
-          (await this.adb.getFileDate(phonePath));
+        const isFileType = fileType === 'files' ||
+          (fileType === 'both' && FILE_EXTENSIONS.has(path.extname(phonePath).toLowerCase()));
 
-        const destFolder = date
-          ? path.join(
-              destDir,
-              String(date.getFullYear()),
-              this.pad(date.getMonth() + 1),
-              this.pad(date.getDate()),
-            )
-          : path.join(destDir, 'Unknown');
+        let destFolder: string;
+        if (isFileType) {
+          destFolder = path.join(destDir, 'files');
+        } else {
+          // Date priority: EXIF → ADB ls date → Unknown folder
+          const date =
+            (await this.exif.getDate(tempPath)) ??
+            (await this.adb.getFileDate(phonePath));
+          destFolder = date
+            ? path.join(
+                destDir,
+                String(date.getFullYear()),
+                this.pad(date.getMonth() + 1),
+                this.pad(date.getDate()),
+              )
+            : path.join(destDir, 'Unknown');
+        }
 
         await this.files.ensureDir(destFolder);
 
@@ -208,7 +222,8 @@ export class TransferService extends EventEmitter {
     const ext = path.extname(filePath).toLowerCase();
     if (fileType === 'images') return IMAGE_EXTENSIONS.has(ext);
     if (fileType === 'videos') return VIDEO_EXTENSIONS.has(ext);
-    return IMAGE_EXTENSIONS.has(ext) || VIDEO_EXTENSIONS.has(ext);
+    if (fileType === 'files')  return FILE_EXTENSIONS.has(ext);
+    return IMAGE_EXTENSIONS.has(ext) || VIDEO_EXTENSIONS.has(ext) || FILE_EXTENSIONS.has(ext);
   }
 
   private pad(n: number): string {

@@ -245,6 +245,8 @@ main {
   transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 .type-btn:hover { border-color: var(--primary); }
+.type-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.type-btn:disabled:hover { border-color: var(--border); }
 .type-btn.active {
   border-color: var(--primary);
   background: #eff6ff;
