@@ -4,13 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Android Media Copier</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <!-- ── Header ─────────────────────────────────────────────────────────── -->
   <header>
-    <span class="logo" data-i18n="appTitle">Android Media Copier</span>
+    <span class="logo">
+      <img src="logo.svg" alt="" class="logo-img" aria-hidden="true">
+      <span data-i18n="appTitle">Android Media Copier</span>
+    </span>
     <div class="lang-wrap">
       <label for="lang-select" data-i18n="language">Language</label>
       <select id="lang-select">
@@ -92,6 +96,10 @@
         <details id="adb-guide">
           <summary data-i18n="connect.guideTitle">How to enable USB debugging</summary>
           <ol id="adb-steps"></ol>
+          <details id="adb-brands">
+            <summary data-i18n="connect.brandsTitle">My phone looks different</summary>
+            <dl id="adb-brands-list"></dl>
+          </details>
         </details>
 
       </div>
@@ -208,8 +216,10 @@
         <button class="modal-close" id="btn-browser-close" aria-label="Close">&times;</button>
       </div>
       <div id="browser-path-bar" class="browser-path-bar"></div>
+      <div id="browser-shortcuts" class="browser-shortcuts" hidden></div>
       <div id="browser-list" class="browser-list"></div>
       <div class="modal-footer">
+        <p id="browser-warning" class="browser-warning" hidden></p>
         <button class="btn-secondary" id="btn-browser-cancel" data-i18n="browser.cancel">Cancel</button>
         <button class="btn-primary"   id="btn-browser-select" data-i18n="browser.select">Select this folder</button>
       </div>

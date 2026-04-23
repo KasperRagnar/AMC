@@ -1,16 +1,33 @@
 // ─── State ────────────────────────────────────────────────────────────────────
 const state = {
-  lang:        'en',
-  fileType:    'allTypes',      // 'images' | 'videos' | 'allTypes' | 'files' | 'music'
-  copyMode:    'allFiles',  // 'allFiles' | 'dateRange'
-  dateFrom:    null,        // 'YYYY-MM-DD' | null
-  dateTo:      null,        // 'YYYY-MM-DD' | null
-  sourcePath:  null,        // selected phone path
-  destPath:    null,        // selected local path
-  browserMode: null,        // 'phone' | 'local'  (while modal is open)
-  browserPath: null,        // currently viewed path in browser modal
-  homeDir:     null,        // local user home directory (fetched from API)
-  ws:          null,        // active WebSocket during transfer
+  lang:               'en',
+  fileType:           'allTypes',   // 'images' | 'videos' | 'allTypes' | 'files' | 'music'
+  copyMode:           'allFiles',   // 'allFiles' | 'dateRange'
+  dateFrom:           null,         // 'YYYY-MM-DD' | null
+  dateTo:             null,         // 'YYYY-MM-DD' | null
+  sourcePath:         null,         // selected phone path
+  destPath:           null,         // selected local path
+  browserMode:        null,         // 'phone' | 'local'  (while modal is open)
+  browserPath:        null,         // currently viewed path in browser modal
+  browserWarningShown: false,
+  homeDir:            null,         // local user home directory (fetched from API)
+  ws:                 null,         // active WebSocket during transfer
+};
+
+const PHONE_DEFAULT_PATH = {
+  images:   '/storage/emulated/0/DCIM',
+  videos:   '/storage/emulated/0/DCIM',
+  files:    '/storage/emulated/0/Download',
+  music:    '/storage/emulated/0/Music',
+  allTypes: '/storage/emulated/0/DCIM',
+};
+
+const PHONE_SHORTCUTS = {
+  images:   ['/storage/emulated/0/DCIM', '/storage/emulated/0/Pictures'],
+  videos:   ['/storage/emulated/0/DCIM', '/storage/emulated/0/Movies'],
+  files:    ['/storage/emulated/0/Download', '/storage/emulated/0/Documents'],
+  music:    ['/storage/emulated/0/Music'],
+  allTypes: ['/storage/emulated/0/DCIM', '/storage/emulated/0/Download', '/storage/emulated/0/Music'],
 };
 
 // ─── i18n ──────────────────────────────────────────────────────────────────────
@@ -23,6 +40,7 @@ async function loadLanguage(lang) {
   document.documentElement.lang = lang;
   applyStaticTranslations();
   renderAdbSteps();
+  renderBrandSteps();
   refreshPathDisplays();
 }
 
@@ -232,6 +250,19 @@ function renderAdbSteps() {
   });
 }
 
+function renderBrandSteps() {
+  const list = document.getElementById('adb-brands-list');
+  list.innerHTML = '';
+  tArr('connect.brands').forEach(brand => {
+    const dt = document.createElement('dt');
+    dt.textContent = brand.name;
+    const dd = document.createElement('dd');
+    dd.textContent = brand.path;
+    list.appendChild(dt);
+    list.appendChild(dd);
+  });
+}
+
 // ─── Setup screen ──────────────────────────────────────────────────────────────
 function selectFileType(type) {
   state.fileType = type;
@@ -292,12 +323,16 @@ function setPathDisplay(id, value, placeholder) {
 // ─── Browser modal ─────────────────────────────────────────────────────────────
 async function openBrowser(mode) {
   state.browserMode = mode;
+  state.browserWarningShown = false;
   document.getElementById('browser-title').textContent =
     t(mode === 'phone' ? 'browser.titlePhone' : 'browser.titleLocal');
   document.getElementById('modal-browser').hidden = false;
+  document.getElementById('browser-warning').hidden = true;
+  document.getElementById('browser-shortcuts').hidden = true;
 
   if (mode === 'phone') {
-    await navigatePhone('/storage/emulated/0');
+    const defaultPath = PHONE_DEFAULT_PATH[state.fileType] ?? '/storage/emulated/0';
+    await navigatePhone(defaultPath);
   } else {
     await navigateLocal(state.homeDir ?? '/');
   }
@@ -309,10 +344,23 @@ function closeBrowser() {
   state.browserPath = null;
 }
 
-function confirmBrowserSelection() {
+async function confirmBrowserSelection() {
   const path = state.browserPath;
   if (!path) return;
 
+  if (state.browserMode === 'phone' && !state.browserWarningShown) {
+    const res = await fetch(`/api/device/check?path=${encodeURIComponent(path)}`);
+    const { accessible } = await res.json();
+    if (!accessible) {
+      const warn = document.getElementById('browser-warning');
+      warn.textContent = t('browser.inaccessible');
+      warn.hidden = false;
+      state.browserWarningShown = true;
+      return;
+    }
+  }
+
+  state.browserWarningShown = false;
   if (state.browserMode === 'phone') {
     state.sourcePath = path;
   } else {
@@ -333,7 +381,30 @@ function isAndroidSystemDir(name) {
   return name.startsWith('.') || ANDROID_SYSTEM_DIRS.has(name);
 }
 
+function renderShortcuts() {
+  const wrap = document.getElementById('browser-shortcuts');
+  const paths = PHONE_SHORTCUTS[state.fileType] ?? [];
+  wrap.hidden = paths.length === 0;
+  wrap.innerHTML = '';
+
+  const label = document.createElement('span');
+  label.className = 'shortcuts-label';
+  label.textContent = t('browser.suggestedTitle');
+  wrap.appendChild(label);
+
+  paths.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'shortcut-btn';
+    btn.textContent = p.split('/').pop();
+    btn.onclick = () => navigatePhone(p);
+    wrap.appendChild(btn);
+  });
+}
+
 async function navigatePhone(path) {
+  state.browserWarningShown = false;
+  document.getElementById('browser-warning').hidden = true;
+  renderShortcuts();
   state.browserPath = path;
   document.getElementById('browser-path-bar').textContent = path;
   showBrowserLoading();
@@ -345,6 +416,7 @@ async function navigatePhone(path) {
 }
 
 async function navigateLocal(path) {
+  document.getElementById('browser-shortcuts').hidden = true;
   state.browserPath = path;
   document.getElementById('browser-path-bar').textContent = path;
   showBrowserLoading();
@@ -460,6 +532,7 @@ function handleWsMessage(msg) {
     case 'conflict':   showConflict(msg);                 break;
     case 'complete':   showSummary(msg);                  break;
     case 'disconnect': showError(t('error.disconnected')); break;
+    case 'noFiles':    showError(t('transfer.noFiles'));   break;
   }
 }
 

@@ -19,12 +19,21 @@
     "adbNotFoundHint": "Android Debug Bridge (ADB) was not found. Please install Android Platform Tools and make sure \"adb\" is in your system PATH.",
     "guideTitle": "How to enable USB debugging",
     "guideSteps": [
-      "On your phone, open Settings and go to \"About Phone\".",
-      "Tap \"Build number\" 7 times — you will see a message that Developer Options are now unlocked.",
-      "Go back to Settings and open \"Developer Options\".",
-      "Enable \"USB Debugging\".",
-      "Connect your phone to this computer via USB.",
-      "When a dialog appears on your phone asking to allow USB debugging, tap \"Allow\"."
+      "Open Settings on your phone.",
+      "Tap About Phone.",
+      "Tap Build Number 7 times. After a few taps you will see a message saying \"You are now a developer\".",
+      "Go back to Settings and tap Developer Options.",
+      "Turn on USB Debugging.",
+      "Connect your phone to this computer with a USB cable. If a popup asks what to use the USB for, choose File Transfer.",
+      "When your phone asks \"Allow USB debugging?\" — tap Allow."
+    ],
+    "brandsTitle": "My phone looks different",
+    "brands": [
+      { "name": "Samsung",        "path": "Settings → About Phone → Software Information → tap Build Number 7 times. Developer Options then appears in the main Settings." },
+      { "name": "Xiaomi / MIUI",  "path": "Settings → About Phone → tap MIUI Version 7 times. Then Settings → Additional Settings → Developer Options." },
+      { "name": "OnePlus",                    "path": "Settings → About Device → tap Build Number 7 times. Then Settings → System → Developer Options." },
+      { "name": "Huawei / Honor / Google Pixel", "path": "Settings → About Phone → tap Build Number 7 times. Then Settings → System → Developer Options." },
+      { "name": "Other",          "path": "Open Settings and find About Phone or About Device. Tap Build Number 7 times. Developer Options will then appear in your main Settings." }
     ]
   },
   "setup": {
@@ -51,6 +60,7 @@
   "transfer": {
     "scanning": "Scanning phone for files...",
     "title": "Copying files...",
+    "noFiles": "No matching files were found in the selected folder.",
     "found": "Found {total} files on phone",
     "fileOf": "File {current} of {total}",
     "cancel": "Cancel",
@@ -82,6 +92,8 @@
     "cancel": "Cancel",
     "loading": "Loading...",
     "empty": "No subfolders here",
-    "goUp": "Go up"
+    "goUp": "Go up",
+    "suggestedTitle": "Suggested:",
+    "inaccessible": "⚠ This folder may not be accessible. Tap \"Select this folder\" again to use it anyway."
   }
 }

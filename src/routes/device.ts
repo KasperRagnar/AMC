@@ -24,4 +24,11 @@ router.get('/browse', async (req, res) => {
   res.json({ path: phonePath, parent, entries });
 });
 
+router.get('/check', async (req, res) => {
+  const phonePath = req.query.path as string;
+  if (!phonePath) return res.status(400).json({ error: 'path required' });
+  const accessible = await adb.isAccessible(phonePath);
+  res.json({ accessible });
+});
+
 export default router;

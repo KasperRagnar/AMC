@@ -19,12 +19,21 @@
     "adbNotFoundHint": "No se encontró Android Debug Bridge (ADB). Por favor, instala Android Platform Tools y asegúrate de que \"adb\" esté en el PATH de tu sistema.",
     "guideTitle": "Cómo activar la depuración USB",
     "guideSteps": [
-      "En tu teléfono, abre Ajustes y ve a \"Acerca del teléfono\".",
-      "Toca \"Número de compilación\" 7 veces — verás un mensaje indicando que las Opciones de desarrollador están desbloqueadas.",
-      "Vuelve a Ajustes y abre \"Opciones de desarrollador\".",
-      "Activa \"Depuración USB\".",
-      "Conecta tu teléfono a este ordenador mediante USB.",
-      "Cuando aparezca un diálogo en tu teléfono pidiendo permitir la depuración USB, toca \"Permitir\"."
+      "Abre Ajustes en tu teléfono.",
+      "Toca Acerca del teléfono.",
+      "Toca Número de compilación 7 veces. Después de unos toques verás un mensaje diciendo \"Ahora eres un desarrollador\".",
+      "Vuelve a Ajustes y toca Opciones de desarrollador.",
+      "Activa Depuración USB.",
+      "Conecta tu teléfono a este ordenador con un cable USB. Si aparece un popup preguntando para qué usar el USB, elige Transferencia de archivos.",
+      "Cuando tu teléfono pregunte \"¿Permitir depuración USB?\" — toca Permitir."
+    ],
+    "brandsTitle": "Mi teléfono se ve diferente",
+    "brands": [
+      { "name": "Samsung",        "path": "Ajustes → Acerca del teléfono → Información de software → toca Número de compilación 7 veces. Opciones de desarrollador aparecerá en los Ajustes principales." },
+      { "name": "Xiaomi / MIUI",  "path": "Ajustes → Acerca del teléfono → toca Versión MIUI 7 veces. Luego Ajustes → Ajustes adicionales → Opciones de desarrollador." },
+      { "name": "OnePlus",                    "path": "Ajustes → Acerca del dispositivo → toca Número de compilación 7 veces. Luego Ajustes → Sistema → Opciones de desarrollador." },
+      { "name": "Huawei / Honor / Google Pixel", "path": "Ajustes → Acerca del teléfono → toca Número de compilación 7 veces. Luego Ajustes → Sistema → Opciones de desarrollador." },
+      { "name": "Otros",          "path": "Abre Ajustes y busca Acerca del teléfono o Acerca del dispositivo. Toca Número de compilación 7 veces. Opciones de desarrollador aparecerá en tus Ajustes principales." }
     ]
   },
   "setup": {
@@ -51,6 +60,7 @@
   "transfer": {
     "scanning": "Buscando archivos en el teléfono...",
     "title": "Copiando archivos...",
+    "noFiles": "No se encontraron archivos coincidentes en la carpeta seleccionada.",
     "found": "Se encontraron {total} archivos en el teléfono",
     "fileOf": "Archivo {current} de {total}",
     "cancel": "Cancelar",
@@ -82,6 +92,8 @@
     "cancel": "Cancelar",
     "loading": "Cargando...",
     "empty": "No hay subcarpetas aquí",
-    "goUp": "Subir"
+    "goUp": "Subir",
+    "suggestedTitle": "Sugeridas:",
+    "inaccessible": "⚠ Es posible que esta carpeta no sea accesible. Pulsa \"Seleccionar esta carpeta\" de nuevo para usarla de todas formas."
   }
 }

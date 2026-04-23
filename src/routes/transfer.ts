@@ -59,6 +59,7 @@ export function createTransferRouter(getWs: () => WebSocket | null) {
     activeTransfer.on('conflict',   data => send({ type: 'conflict',   ...data }));
     activeTransfer.on('complete',   data => send({ type: 'complete',   ...data }));
     activeTransfer.on('disconnect',  ()   => send({ type: 'disconnect' }));
+    activeTransfer.on('noFiles',     ()   => send({ type: 'noFiles' }));
 
     // Respond immediately — transfer runs asynchronously
     res.json({ ok: true });

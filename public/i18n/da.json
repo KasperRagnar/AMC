@@ -19,12 +19,21 @@
     "adbNotFoundHint": "Android Debug Bridge (ADB) blev ikke fundet. Installer venligst Android Platform Tools og sørg for, at \"adb\" er tilgængeligt i dit systems PATH.",
     "guideTitle": "Sådan aktiverer du USB-fejlfinding",
     "guideSteps": [
-      "Åbn Indstillinger på din telefon og gå til \"Om telefonen\".",
-      "Tryk på \"Buildnummer\" 7 gange — du vil se en besked om, at Udviklermuligheder nu er låst op.",
-      "Gå tilbage til Indstillinger og åbn \"Udviklermuligheder\".",
-      "Aktivér \"USB-fejlfinding\".",
-      "Tilslut din telefon til denne computer via USB.",
-      "Når der vises en dialog på din telefon om at tillade USB-fejlfinding, tryk på \"Tillad\"."
+      "Åbn Indstillinger på din telefon.",
+      "Tryk på Om telefonen.",
+      "Tryk på Buildnummer 7 gange. Efter et par tryk vil du se en besked om, at \"Du er nu udvikler\".",
+      "Gå tilbage til Indstillinger og tryk på Udviklermuligheder.",
+      "Slå USB-fejlfinding til.",
+      "Tilslut din telefon til denne computer med et USB-kabel. Hvis der vises en popup om, hvad USB-forbindelsen skal bruges til, skal du vælge Filoverførsel.",
+      "Når din telefon spørger \"Tillad USB-fejlfinding?\" — tryk på Tillad."
+    ],
+    "brandsTitle": "Min telefon ser anderledes ud",
+    "brands": [
+      { "name": "Samsung",        "path": "Indstillinger → Om telefonen → Softwareoplysninger → tryk på Buildnummer 7 gange. Udviklermuligheder vises derefter i de overordnede Indstillinger." },
+      { "name": "Xiaomi / MIUI",  "path": "Indstillinger → Om telefonen → tryk på MIUI-version 7 gange. Derefter Indstillinger → Yderligere indstillinger → Udviklermuligheder." },
+      { "name": "OnePlus",                    "path": "Indstillinger → Om enheden → tryk på Buildnummer 7 gange. Derefter Indstillinger → System → Udviklermuligheder." },
+      { "name": "Huawei / Honor / Google Pixel", "path": "Indstillinger → Om telefonen → tryk på Buildnummer 7 gange. Derefter Indstillinger → System → Udviklermuligheder." },
+      { "name": "Andre",          "path": "Åbn Indstillinger og find Om telefonen eller Om enheden. Tryk på Buildnummer 7 gange. Udviklermuligheder vises derefter i dine overordnede Indstillinger." }
     ]
   },
   "setup": {
@@ -51,6 +60,7 @@
   "transfer": {
     "scanning": "Søger efter filer på telefonen...",
     "title": "Kopierer filer...",
+    "noFiles": "Der blev ikke fundet nogen matchende filer i den valgte mappe.",
     "found": "Fandt {total} filer på telefonen",
     "fileOf": "Fil {current} af {total}",
     "cancel": "Annuller",
@@ -82,6 +92,8 @@
     "cancel": "Annuller",
     "loading": "Indlæser...",
     "empty": "Ingen undermapper her",
-    "goUp": "Gå op"
+    "goUp": "Gå op",
+    "suggestedTitle": "Foreslåede:",
+    "inaccessible": "⚠ Denne mappe er muligvis ikke tilgængelig. Tryk på \"Vælg denne mappe\" igen for at bruge den alligevel."
   }
 }

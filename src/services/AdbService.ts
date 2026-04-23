@@ -61,13 +61,17 @@ export class AdbService {
   }
 
   async listFilesRecursive(phonePath: string): Promise<string[]> {
+    let output = '';
     try {
-      const output = await this.run(['shell', 'find', phonePath, '-type', 'f']);
-      // adb shell output uses CRLF on Windows — trim() strips the \r so paths are clean
-      return output.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    } catch {
-      return [];
+      output = await this.run(['shell', 'find', phonePath, '-type', 'f']);
+    } catch (err: any) {
+      // find exits non-zero when it hits permission-denied dirs (Android/data, Android/obb, etc.).
+      // stdout still contains every file found in accessible dirs — recover it.
+      output = err?.stdout ?? '';
     }
+    return output.trim().split('\n')
+      .map(l => l.trim())
+      .filter(l => l.length > 0 && !l.startsWith('find:'));
   }
 
   /**
@@ -98,6 +102,15 @@ export class AdbService {
       }
     }
     return result;
+  }
+
+  async isAccessible(phonePath: string): Promise<boolean> {
+    try {
+      const output = await this.run(['shell', 'ls', '-la', phonePath]);
+      return !output.includes('Permission denied') && !output.includes('No such file');
+    } catch {
+      return false;
+    }
   }
 
   async pullFile(phonePath: string, localPath: string): Promise<void> {

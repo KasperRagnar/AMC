@@ -114,6 +114,11 @@ export class TransferService extends EventEmitter {
       });
     }
 
+    if (filtered.length === 0) {
+      this.emit('noFiles');
+      return;
+    }
+
     // Tell the frontend how many files were found before copying begins
     this.emit('scan', { total: filtered.length });
 
