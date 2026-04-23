@@ -3,6 +3,7 @@ const state = {
   lang:               'en',
   fileType:           'allTypes',   // 'images' | 'videos' | 'allTypes' | 'files' | 'music'
   copyMode:           'allFiles',   // 'allFiles' | 'dateRange'
+  folderMode:         'filesOnly',  // 'filesOnly' | 'keepFolders'
   dateFrom:           null,         // 'YYYY-MM-DD' | null
   dateTo:             null,         // 'YYYY-MM-DD' | null
   sourcePath:         null,         // selected phone path
@@ -86,6 +87,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Copy mode buttons
   document.querySelectorAll('[data-group="copyMode"]').forEach(btn => {
     btn.addEventListener('click', () => selectCopyMode(btn.dataset.value));
+  });
+
+  // Folder mode buttons
+  document.querySelectorAll('[data-group="folderMode"]').forEach(btn => {
+    btn.addEventListener('click', () => selectFolderMode(btn.dataset.value));
   });
 
   // Date range inputs
@@ -271,8 +277,7 @@ function selectFileType(type) {
   });
 
   const isFiles = type === 'files' || type === 'music';
-  document.querySelector('[data-group="copyMode"][data-value="allFiles"]').disabled = isFiles;
-  document.querySelector('[data-group="copyMode"][data-value="dateRange"]').hidden  = isFiles;
+  document.getElementById('section-date-filter').hidden = isFiles;
 
   // If date range was active when switching to Files, reset to all files
   if (isFiles && state.copyMode === 'dateRange') {
@@ -291,6 +296,13 @@ function selectCopyMode(mode) {
   } else {
     validateDateRange();
   }
+}
+
+function selectFolderMode(mode) {
+  state.folderMode = mode;
+  document.querySelectorAll('[data-group="folderMode"]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === mode);
+  });
 }
 
 function validateDateRange() {
@@ -501,9 +513,10 @@ async function startTransfer() {
   showScreen('transfer');
 
   const body = {
-    sourceDir: state.sourcePath,
-    destDir:   state.destPath,
-    fileType:  state.fileType,
+    sourceDir:  state.sourcePath,
+    destDir:    state.destPath,
+    fileType:   state.fileType,
+    folderMode: state.folderMode,
   };
   if (state.copyMode === 'dateRange') {
     body.dateFrom = state.dateFrom;
@@ -607,8 +620,11 @@ function resetToStart() {
   document.querySelectorAll('[data-group="copyMode"]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.value === 'allFiles');
   });
-  document.querySelector('[data-group="copyMode"][data-value="allFiles"]').disabled = false;
-  document.querySelector('[data-group="copyMode"][data-value="dateRange"]').hidden  = false;
+  state.folderMode = 'filesOnly';
+  document.querySelectorAll('[data-group="folderMode"]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === 'filesOnly');
+  });
+  document.getElementById('section-date-filter').hidden = false;
   document.getElementById('date-range-row').hidden = true;
   document.getElementById('date-from').value = '';
   document.getElementById('date-to').value   = '';

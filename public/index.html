@@ -111,45 +111,62 @@
 
         <h2 data-i18n="setup.title">What would you like to copy?</h2>
 
-        <div class="type-buttons">
-          <button class="type-btn" data-group="fileType" data-value="images" data-i18n="setup.images">Images</button>
-          <button class="type-btn" data-group="fileType" data-value="videos" data-i18n="setup.videos">Videos</button>
-          <button class="type-btn" data-group="fileType" data-value="files"  data-i18n="setup.files">Files</button>
-          <button class="type-btn" data-group="fileType" data-value="music"  data-i18n="setup.music">Music</button>
-          <button class="type-btn active" data-group="fileType" data-value="allTypes" data-i18n="setup.allTypes">All Types</button>
+        <div class="setup-section">
+          <p class="section-label" data-i18n="setup.sectionFileType">File type</p>
+          <div class="type-buttons">
+            <button class="type-btn" data-group="fileType" data-value="images" data-i18n="setup.images">Images</button>
+            <button class="type-btn" data-group="fileType" data-value="videos" data-i18n="setup.videos">Videos</button>
+            <button class="type-btn" data-group="fileType" data-value="files"  data-i18n="setup.files">Files</button>
+            <button class="type-btn" data-group="fileType" data-value="music"  data-i18n="setup.music">Music</button>
+            <button class="type-btn active" data-group="fileType" data-value="allTypes" data-i18n="setup.allTypes">All Types</button>
+          </div>
         </div>
 
-        <div class="type-buttons">
-          <button class="type-btn active" data-group="copyMode" data-value="allFiles" data-i18n="setup.modeAll">All files</button>
-          <button class="type-btn" data-group="copyMode" data-value="dateRange" data-i18n="setup.modeDateRange">Date range</button>
+        <div class="setup-section" id="section-date-filter">
+          <p class="section-label" data-i18n="setup.sectionDateFilter">Date filter</p>
+          <div class="type-buttons">
+            <button class="type-btn active" data-group="copyMode" data-value="allFiles" data-i18n="setup.modeAll">All files</button>
+            <button class="type-btn" data-group="copyMode" data-value="dateRange" data-i18n="setup.modeDateRange">Date range</button>
+          </div>
+          <div id="date-range-row" class="date-range-row" hidden>
+            <div class="date-field">
+              <label for="date-from" data-i18n="setup.dateFrom">From</label>
+              <input type="date" id="date-from">
+            </div>
+            <div class="date-field">
+              <label for="date-to" data-i18n="setup.dateTo">To</label>
+              <input type="date" id="date-to">
+            </div>
+            <p id="date-range-error" class="hint date-range-error" hidden></p>
+          </div>
         </div>
 
-        <div id="date-range-row" class="date-range-row" hidden>
-          <div class="date-field">
-            <label for="date-from" data-i18n="setup.dateFrom">From</label>
-            <input type="date" id="date-from">
+        <div class="setup-section">
+          <p class="section-label" data-i18n="setup.sectionStructure">Structure</p>
+          <div class="type-buttons">
+            <button class="type-btn active" data-group="folderMode" data-value="filesOnly"   data-i18n="setup.folderModeFiles">Files</button>
+            <button class="type-btn"        data-group="folderMode" data-value="keepFolders" data-i18n="setup.folderModeFolders">Files &amp; folders</button>
           </div>
-          <div class="date-field">
-            <label for="date-to" data-i18n="setup.dateTo">To</label>
-            <input type="date" id="date-to">
-          </div>
-          <p id="date-range-error" class="hint date-range-error" hidden></p>
         </div>
 
-        <div class="path-row">
-          <div class="path-info">
-            <label data-i18n="setup.sourceLabel">Source folder on phone</label>
-            <span id="source-path" class="path-display empty"></span>
-          </div>
-          <button class="btn-secondary" id="btn-browse-phone" data-i18n="setup.browse">Browse</button>
-        </div>
+        <hr class="setup-divider">
 
-        <div class="path-row">
-          <div class="path-info">
-            <label data-i18n="setup.destLabel">Destination on this computer</label>
-            <span id="dest-path" class="path-display empty"></span>
+        <div class="setup-section">
+          <p class="section-label" data-i18n="setup.sectionFolders">Folders</p>
+          <div class="path-row">
+            <div class="path-info">
+              <label data-i18n="setup.sourceLabel">Source folder on phone</label>
+              <span id="source-path" class="path-display empty"></span>
+            </div>
+            <button class="btn-secondary" id="btn-browse-phone" data-i18n="setup.browse">Browse</button>
           </div>
-          <button class="btn-secondary" id="btn-browse-local" data-i18n="setup.browse">Browse</button>
+          <div class="path-row">
+            <div class="path-info">
+              <label data-i18n="setup.destLabel">Destination on this computer</label>
+              <span id="dest-path" class="path-display empty"></span>
+            </div>
+            <button class="btn-secondary" id="btn-browse-local" data-i18n="setup.browse">Browse</button>
+          </div>
         </div>
 
         <p id="setup-hint" class="hint" hidden data-i18n="setup.selectPaths"></p>
