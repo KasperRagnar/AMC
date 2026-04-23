@@ -89,7 +89,12 @@
     "copied": "Archivos copiados",
     "skipped": "Archivos omitidos",
     "errors": "Errores",
-    "ok": "Volver al inicio"
+    "ok": "Volver al inicio",
+    "images": "Fotos",
+    "videos": "Videos",
+    "music": "Música",
+    "files": "Archivos",
+    "noDetails": "Sin detalles"
   },
   "browser": {
     "titlePhone": "Seleccionar carpeta de origen en el teléfono",

@@ -24,11 +24,19 @@ The app runs entirely on your local machine. Open it via a start script, a brows
 
 | Connect | Setup |
 |---------|-------|
-| ![Connect screen](docs/screenshots/connect.png) | ![Setup screen](docs/screenshots/setup.png) |
+| ![Connect screen](docs/screenshots/connect.png) | ![Setup screen – file type and filter options](docs/screenshots/setup%201.png) |
 
-| Transfer | Summary |
-|----------|---------|
-| ![Transfer screen](docs/screenshots/transfer.png) | ![Summary screen](docs/screenshots/summary.png) |
+| Setup (date range active) | Transfer |
+|--------------------------|----------|
+| ![Setup screen – date range selected with folders chosen](docs/screenshots/setup%202.png) | ![Transfer screen](docs/screenshots/transfer.png) |
+
+| Summary | Summary – files copied detail |
+|---------|-------------------------------|
+| ![Summary screen](docs/screenshots/summary%201.png) | ![Summary – copied breakdown by type](docs/screenshots/summary%202.png) |
+
+| Summary – files skipped detail | Summary – errors detail |
+|--------------------------------|-------------------------|
+| ![Summary – skipped file list](docs/screenshots/summary%203.png) | ![Summary – error details](docs/screenshots/summary%204.png) |
 
 ---
 
