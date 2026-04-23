@@ -194,18 +194,21 @@
       <div class="card">
         <h2 data-i18n="summary.title">Transfer Complete</h2>
         <div class="summary-grid">
-          <div class="summary-item success">
+          <div class="summary-item success" data-detail="copied" role="button" tabindex="0">
             <span id="sum-copied" class="summary-num">0</span>
             <span data-i18n="summary.copied">Files copied</span>
           </div>
-          <div class="summary-item">
+          <div class="summary-item" data-detail="skipped" role="button" tabindex="0">
             <span id="sum-skipped" class="summary-num">0</span>
             <span data-i18n="summary.skipped">Files skipped</span>
           </div>
-          <div class="summary-item danger">
+          <div class="summary-item danger" data-detail="errors" role="button" tabindex="0">
             <span id="sum-errors" class="summary-num">0</span>
             <span data-i18n="summary.errors">Errors</span>
           </div>
+        </div>
+        <div id="summary-detail-panel" class="summary-detail-panel" hidden>
+          <div id="summary-detail-content"></div>
         </div>
         <button id="btn-ok" class="btn-primary" data-i18n="summary.ok">Back to Start</button>
       </div>

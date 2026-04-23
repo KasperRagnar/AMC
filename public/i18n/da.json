@@ -89,7 +89,12 @@
     "copied": "Filer kopieret",
     "skipped": "Filer sprunget over",
     "errors": "Fejl",
-    "ok": "Tilbage til start"
+    "ok": "Tilbage til start",
+    "images": "Fotos",
+    "videos": "Videoer",
+    "music": "Musik",
+    "files": "Filer",
+    "noDetails": "Ingen detaljer"
   },
   "browser": {
     "titlePhone": "Vælg kildemappe på telefonen",

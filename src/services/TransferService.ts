@@ -34,9 +34,12 @@ export interface ScanEvent {
 }
 
 export interface SummaryEvent {
-  copied: number;
-  skipped: number;
-  errors: number;
+  copied:       number;
+  skipped:      number;
+  errors:       number;
+  copiedByType: { images: number; videos: number; music: number; files: number };
+  skippedFiles: string[];
+  errorDetails: { file: string; reason: string }[];
 }
 
 const IMAGE_EXTENSIONS = new Set([
@@ -125,7 +128,12 @@ export class TransferService extends EventEmitter {
     // Tell the frontend how many files were found before copying begins
     this.emit('scan', { total: filtered.length });
 
-    const summary: SummaryEvent = { copied: 0, skipped: 0, errors: 0 };
+    const summary: SummaryEvent = {
+      copied: 0, skipped: 0, errors: 0,
+      copiedByType: { images: 0, videos: 0, music: 0, files: 0 },
+      skippedFiles: [],
+      errorDetails: [],
+    };
     // 'skip-all' or 'overwrite-all' applied to all remaining conflicts
     let globalAction: 'skip-all' | 'overwrite-all' | null = null;
 
@@ -189,6 +197,7 @@ export class TransferService extends EventEmitter {
 
           if (action === 'skip' || action === 'skip-all') {
             summary.skipped++;
+            summary.skippedFiles.push(filename);
             await this.files.deleteFile(tempPath);
             continue;
           }
@@ -196,6 +205,11 @@ export class TransferService extends EventEmitter {
 
         await this.moveToDest(tempPath, destPath);
         summary.copied++;
+        const category =
+          FILE_EXTENSIONS.has(ext)  ? 'files'  :
+          MUSIC_EXTENSIONS.has(ext) ? 'music'  :
+          VIDEO_EXTENSIONS.has(ext) ? 'videos' : 'images';
+        summary.copiedByType[category]++;
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
         const deviceGone =
@@ -211,6 +225,7 @@ export class TransferService extends EventEmitter {
         }
 
         summary.errors++;
+        summary.errorDetails.push({ file: filename, reason: msg });
         await this.files.deleteFile(tempPath);
       }
     }

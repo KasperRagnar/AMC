@@ -89,7 +89,12 @@
     "copied": "Files copied",
     "skipped": "Files skipped",
     "errors": "Errors",
-    "ok": "Back to Start"
+    "ok": "Back to Start",
+    "images": "Photos",
+    "videos": "Videos",
+    "music": "Music",
+    "files": "Files",
+    "noDetails": "No details"
   },
   "browser": {
     "titlePhone": "Select source folder on phone",

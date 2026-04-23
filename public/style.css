@@ -467,7 +467,12 @@ main {
   font-size: 0.78rem;
   color: var(--muted);
   text-align: center;
+  cursor: pointer;
+  outline: 2px solid transparent;
+  transition: outline-color 0.15s, opacity 0.15s;
 }
+.summary-item:hover { opacity: 0.8; }
+.summary-item.active { outline-color: var(--accent); }
 
 .summary-num {
   font-size: 2rem;
@@ -477,6 +482,34 @@ main {
 }
 .summary-item.success .summary-num { color: var(--success); }
 .summary-item.danger  .summary-num { color: var(--error); }
+
+.summary-detail-panel {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.83rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  word-break: break-all;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-row .detail-reason {
+  color: var(--muted);
+  word-break: break-word;
+}
+.detail-row--error {
+  flex-direction: column;
+  gap: 2px;
+}
 
 /* ─── Modal overlay ──────────────────────────────────────────────────────── */
 .modal-overlay {

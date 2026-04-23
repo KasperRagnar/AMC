@@ -13,6 +13,7 @@ const state = {
   browserWarningShown: false,
   homeDir:            null,         // local user home directory (fetched from API)
   ws:                 null,         // active WebSocket during transfer
+  lastSummary:        null,         // summary payload for detail panel
 };
 
 const PHONE_DEFAULT_PATH = {
@@ -138,6 +139,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Summary OK button
   document.getElementById('btn-ok').addEventListener('click', resetToStart);
+
+  // Summary detail tiles
+  document.querySelectorAll('[data-detail]').forEach(tile => {
+    tile.addEventListener('click', () => toggleDetailPanel(tile.dataset.detail));
+  });
 
   showScreen('connect');
   startDevicePolling();
@@ -592,10 +598,13 @@ async function resolveConflict(action) {
 }
 
 // ─── Summary ───────────────────────────────────────────────────────────────────
-function showSummary({ copied, skipped, errors }) {
+function showSummary(msg) {
+  const { copied, skipped, errors } = msg;
   document.getElementById('sum-copied').textContent  = copied;
   document.getElementById('sum-skipped').textContent = skipped;
   document.getElementById('sum-errors').textContent  = errors;
+
+  state.lastSummary = msg;
 
   stopDeviceWatch();
   if (state.ws) { state.ws.close(); state.ws = null; }
@@ -603,8 +612,72 @@ function showSummary({ copied, skipped, errors }) {
   showScreen('summary');
 }
 
+function toggleDetailPanel(type) {
+  const panel   = document.getElementById('summary-detail-panel');
+  const content = document.getElementById('summary-detail-content');
+  const tiles   = document.querySelectorAll('[data-detail]');
+
+  const alreadyOpen = !panel.hidden && panel.dataset.activeType === type;
+
+  tiles.forEach(tile => tile.classList.remove('active'));
+  if (alreadyOpen) {
+    panel.hidden = true;
+    panel.dataset.activeType = '';
+    return;
+  }
+
+  panel.dataset.activeType = type;
+  panel.hidden = false;
+  document.querySelector(`[data-detail="${type}"]`).classList.add('active');
+  content.innerHTML = renderDetail(type, state.lastSummary);
+}
+
+function renderDetail(type, s) {
+  if (type === 'copied') {
+    const rows = [
+      ['images', t('summary.images')],
+      ['videos', t('summary.videos')],
+      ['music',  t('summary.music')],
+      ['files',  t('summary.files')],
+    ].filter(([k]) => s.copiedByType[k] > 0)
+     .map(([k, label]) =>
+       `<div class="detail-row"><span>${esc(label)}</span><span>${s.copiedByType[k]}</span></div>`
+     ).join('');
+    return rows || `<div class="detail-row"><span>${esc(t('summary.noDetails'))}</span></div>`;
+  }
+  if (type === 'skipped') {
+    if (!s.skippedFiles.length)
+      return `<div class="detail-row"><span>${esc(t('summary.noDetails'))}</span></div>`;
+    return s.skippedFiles
+      .map(f => `<div class="detail-row"><span>${esc(f)}</span></div>`)
+      .join('');
+  }
+  if (type === 'errors') {
+    if (!s.errorDetails.length)
+      return `<div class="detail-row"><span>${esc(t('summary.noDetails'))}</span></div>`;
+    return s.errorDetails
+      .map(e => `<div class="detail-row detail-row--error"><span>${esc(e.file)}</span><span class="detail-reason">${esc(e.reason)}</span></div>`)
+      .join('');
+  }
+  return '';
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 // ─── Reset ─────────────────────────────────────────────────────────────────────
 function resetToStart() {
+  const detailPanel = document.getElementById('summary-detail-panel');
+  detailPanel.hidden = true;
+  detailPanel.dataset.activeType = '';
+  document.querySelectorAll('[data-detail]').forEach(tile => tile.classList.remove('active'));
+  state.lastSummary = null;
+
   state.sourcePath = null;
   state.destPath   = null;
   state.fileType   = 'allTypes';
