@@ -276,6 +276,26 @@ main {
   line-height: 1.5;
 }
 
+/* ─── Setup sub-sections ─────────────────────────────────────────────────── */
+.setup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+}
+
+.setup-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
 /* ─── File type buttons ──────────────────────────────────────────────────── */
 .type-buttons {
   display: flex;

@@ -7,6 +7,7 @@ import { FileService } from './FileService';
 
 export type FileType = 'images' | 'videos' | 'allTypes' | 'files' | 'music';
 export type ConflictAction = 'skip' | 'overwrite' | 'skip-all' | 'overwrite-all';
+export type FolderMode = 'filesOnly' | 'keepFolders';
 
 export interface TransferOptions {
   sourceDir: string;
@@ -14,6 +15,7 @@ export interface TransferOptions {
   fileType: FileType;
   dateFrom?: string;
   dateTo?: string;
+  folderMode?: FolderMode;
 }
 
 export interface ProgressEvent {
@@ -96,6 +98,7 @@ export class TransferService extends EventEmitter {
     this.cancelled = false;
 
     const { sourceDir, destDir, fileType } = options;
+    const folderMode = options.folderMode ?? 'filesOnly';
     const tempDir = this.files.getTempDir();
     await this.files.ensureDir(tempDir);
 
@@ -141,7 +144,12 @@ export class TransferService extends EventEmitter {
         const ext = path.extname(phonePath).toLowerCase();
 
         let destFolder: string;
-        if (FILE_EXTENSIONS.has(ext)) {
+        if (folderMode === 'keepFolders') {
+          // Preserve phone folder hierarchy relative to sourceDir.
+          // path.posix.relative handles forward-slash phone paths correctly on Windows.
+          const relDir = path.dirname(path.posix.relative(sourceDir, phonePath));
+          destFolder = path.join(destDir, relDir);
+        } else if (FILE_EXTENSIONS.has(ext)) {
           destFolder = path.join(destDir, 'files');
         } else if (MUSIC_EXTENSIONS.has(ext)) {
           destFolder = path.join(destDir, 'music');

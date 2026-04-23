@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import WebSocket from 'ws';
-import { TransferService, TransferOptions, ConflictAction } from '../services/TransferService';
+import { TransferService, TransferOptions, ConflictAction, FolderMode } from '../services/TransferService';
 import { AdbService } from '../services/AdbService';
 import { ExifService } from '../services/ExifService';
 import { FileService } from '../services/FileService';
@@ -26,7 +26,7 @@ export function createTransferRouter(getWs: () => WebSocket | null) {
   }
 
   router.post('/start', (req, res) => {
-    const { sourceDir, destDir, fileType, dateFrom, dateTo } = req.body as TransferOptions & { dateFrom?: string; dateTo?: string };
+    const { sourceDir, destDir, fileType, dateFrom, dateTo, folderMode } = req.body as TransferOptions & { dateFrom?: string; dateTo?: string };
 
     if (!sourceDir || !destDir || !fileType) {
       res.status(400).json({ error: 'sourceDir, destDir, and fileType are required' });
@@ -50,6 +50,12 @@ export function createTransferRouter(getWs: () => WebSocket | null) {
       }
     }
 
+    const VALID_FOLDER_MODES = new Set<string>(['filesOnly', 'keepFolders']);
+    if (folderMode != null && !VALID_FOLDER_MODES.has(folderMode as string)) {
+      res.status(400).json({ error: 'folderMode must be "filesOnly" or "keepFolders"' });
+      return;
+    }
+
     // Cancel any running transfer before starting a new one
     activeTransfer?.cancel();
 
@@ -67,6 +73,7 @@ export function createTransferRouter(getWs: () => WebSocket | null) {
     const options: TransferOptions = {
       sourceDir, destDir, fileType,
       ...(dateFrom && dateTo ? { dateFrom, dateTo } : {}),
+      ...(folderMode         ? { folderMode: folderMode as FolderMode } : {}),
     };
     activeTransfer.start(options).catch(err => {
       send({ type: 'error', message: String(err) });
