@@ -6,7 +6,7 @@ import os from 'os';
  * Resolves the path to the ADB binary.
  *
  * - In development (ts-node / node dist/): returns 'adb' and relies on system PATH.
- * - In a pkg bundle: extracts the embedded ADB binary to the system temp directory
+ * - In a pkg bundle: extracts the embedded ADB binary to the user's app-data directory
  *   on first run, then returns that path. The extraction is skipped on subsequent runs.
  *
  * ADB binaries are embedded at build time from the bin/ directory.
@@ -14,7 +14,17 @@ import os from 'os';
 
 const isPkg = typeof (process as NodeJS.Process & { pkg?: unknown }).pkg !== 'undefined';
 
-const TEMP_BIN_DIR = path.join(os.tmpdir(), 'amc-adb-bin');
+function getAdbExtractDir(): string {
+  if (process.platform === 'win32') {
+    const localAppData = process.env.LOCALAPPDATA ?? path.join(os.homedir(), 'AppData', 'Local');
+    return path.join(localAppData, 'AMC', 'adb');
+  }
+  if (process.platform === 'darwin') {
+    return path.join(os.homedir(), 'Library', 'Application Support', 'AMC', 'adb');
+  }
+  const xdgData = process.env.XDG_DATA_HOME ?? path.join(os.homedir(), '.local', 'share');
+  return path.join(xdgData, 'AMC', 'adb');
+}
 
 let resolvedPath: string | null = null;
 
@@ -35,10 +45,11 @@ export function getAdbPath(): string {
   const platform    = process.platform;
   const binaryName  = platform === 'win32' ? 'adb.exe' : 'adb';
   const platformDir = platform === 'win32' ? 'win' : platform === 'darwin' ? 'mac' : 'linux';
-  const destBinary  = path.join(TEMP_BIN_DIR, binaryName);
+  const adbExtractDir = getAdbExtractDir();
+  const destBinary  = path.join(adbExtractDir, binaryName);
 
   if (!fs.existsSync(destBinary)) {
-    fs.mkdirSync(TEMP_BIN_DIR, { recursive: true });
+    fs.mkdirSync(adbExtractDir, { recursive: true });
 
     // In a pkg bundle, __dirname resolves inside the virtual snapshot filesystem.
     // Regular fs calls (readFileSync, copyFileSync) work transparently against it.
@@ -53,7 +64,7 @@ export function getAdbPath(): string {
         if (entry.endsWith('.dll')) {
           fs.copyFileSync(
             path.join(srcDir, entry),
-            path.join(TEMP_BIN_DIR, entry),
+            path.join(adbExtractDir, entry),
           );
         }
       }
