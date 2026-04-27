@@ -46,33 +46,45 @@ export function getAdbPath(): string {
   const binaryName  = platform === 'win32' ? 'adb.exe' : 'adb';
   const platformDir = platform === 'win32' ? 'win' : platform === 'darwin' ? 'mac' : 'linux';
   const adbExtractDir = getAdbExtractDir();
-  const destBinary  = path.join(adbExtractDir, binaryName);
+  const destBinary    = path.join(adbExtractDir, binaryName);
+  const versionStamp  = path.join(adbExtractDir, 'adb-version.txt');
 
-  if (!fs.existsSync(destBinary)) {
+  // Read the version bundled at build time (written by npm run setup).
+  const bundledVersionFile = path.join(__dirname, '..', 'bin', 'adb-version.txt');
+  const bundledVersion = fs.existsSync(bundledVersionFile)
+    ? fs.readFileSync(bundledVersionFile, 'utf8').trim()
+    : null;
+
+  const installedVersion = fs.existsSync(versionStamp)
+    ? fs.readFileSync(versionStamp, 'utf8').trim()
+    : null;
+
+  const needsExtract = !fs.existsSync(destBinary) || bundledVersion !== installedVersion;
+
+  if (needsExtract) {
     fs.mkdirSync(adbExtractDir, { recursive: true });
 
     // In a pkg bundle, __dirname resolves inside the virtual snapshot filesystem.
     // Regular fs calls (readFileSync, copyFileSync) work transparently against it.
     const srcDir = path.join(__dirname, '..', 'bin', platformDir);
 
-    // Copy the main binary
     fs.copyFileSync(path.join(srcDir, binaryName), destBinary);
 
-    // On Windows, ADB needs its companion DLLs in the same directory
     if (platform === 'win32') {
       for (const entry of fs.readdirSync(srcDir)) {
         if (entry.endsWith('.dll')) {
-          fs.copyFileSync(
-            path.join(srcDir, entry),
-            path.join(adbExtractDir, entry),
-          );
+          fs.copyFileSync(path.join(srcDir, entry), path.join(adbExtractDir, entry));
         }
       }
     }
 
-    // Ensure the binary is executable on Unix
     if (platform !== 'win32') {
       fs.chmodSync(destBinary, 0o755);
+    }
+
+    // Write version stamp so the next launch skips extraction unless the bundled version changes.
+    if (bundledVersion) {
+      fs.writeFileSync(versionStamp, bundledVersion);
     }
   }
 
