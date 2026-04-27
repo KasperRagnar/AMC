@@ -12,12 +12,13 @@
 
 'use strict';
 
-const https    = require('https');
-const fs       = require('fs');
-const fsp      = require('fs/promises');
-const path     = require('path');
-const stream   = require('stream');
-const unzipper = require('unzipper');
+const https      = require('https');
+const fs         = require('fs');
+const fsp        = require('fs/promises');
+const path       = require('path');
+const stream     = require('stream');
+const unzipper   = require('unzipper');
+const { execFileSync } = require('child_process');
 
 const PLATFORM_TOOLS = {
   win:   'https://dl.google.com/android/repository/platform-tools-latest-windows.zip',
@@ -124,6 +125,20 @@ async function main() {
 
   for (const [name, url] of platforms) {
     await setupPlatform(name, url);
+  }
+
+  // Capture the ADB version from the current platform's binary and write it to bin/adb-version.txt.
+  // All three platform zips ship the same platform-tools release, so one version string covers all.
+  const currentPlatform = process.platform === 'win32' ? 'win' : process.platform === 'darwin' ? 'mac' : 'linux';
+  const currentBinary   = path.join(BIN_DIR, currentPlatform, process.platform === 'win32' ? 'adb.exe' : 'adb');
+  try {
+    const versionOutput = execFileSync(currentBinary, ['version'], { encoding: 'utf8' });
+    const match         = versionOutput.match(/Version\s+([\d.\-]+)/);
+    const versionStr    = match ? match[1] : versionOutput.split('\n')[0].trim();
+    fs.writeFileSync(path.join(BIN_DIR, 'adb-version.txt'), versionStr);
+    console.log(`  ADB version: ${versionStr}`);
+  } catch {
+    console.warn('  Warning: could not determine ADB version — bin/adb-version.txt not written.');
   }
 
   if (currentOnly) {

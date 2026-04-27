@@ -214,6 +214,17 @@ npm run setup      # Download ADB binaries for all platforms (one time, needs in
 npm run dist       # Compile TypeScript + bundle into self-contained executables
 ```
 
+### Updating the bundled ADB version
+
+`npm run setup` skips the download if ADB binaries are already present in `bin/`. To update to the latest ADB release, delete the `bin/`, then re-run:
+
+```bash
+npm run setup      # Re-downloads latest ADB and writes bin/adb-version.txt
+npm run dist       # Bundles the new binaries and version stamp into the executables
+```
+
+End users get the new ADB automatically on their next app launch — the app compares the bundled version against what is already extracted on disk and re-extracts if they differ.
+
 After `npm run dist`, the `release/` folder contains one self-contained executable per platform, named with the current version:
 
 | File | Platform |
@@ -260,6 +271,16 @@ scripts/
 docs/
   screenshots/            App screenshots used in this README
 ```
+
+### Release workflow
+
+1. Make sure the version in `package.json` on `master` is the version you intend to release
+2. Cut a `release/vX.Y.Z` branch from master
+3. Build, test, and publish the release from that branch
+4. Tag the tip of the release branch `vX.Y.Z`
+5. Bump the version in `package.json` on `master` to the next version (e.g. `0.3.0` → `0.4.0`)
+
+`master` must always carry a version number one step ahead of the latest published release. This prevents master from ever sharing a version number with a release that is already out.
 
 ### Adding a language
 

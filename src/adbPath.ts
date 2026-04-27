@@ -6,7 +6,7 @@ import os from 'os';
  * Resolves the path to the ADB binary.
  *
  * - In development (ts-node / node dist/): returns 'adb' and relies on system PATH.
- * - In a pkg bundle: extracts the embedded ADB binary to the system temp directory
+ * - In a pkg bundle: extracts the embedded ADB binary to the user's app-data directory
  *   on first run, then returns that path. The extraction is skipped on subsequent runs.
  *
  * ADB binaries are embedded at build time from the bin/ directory.
@@ -14,7 +14,17 @@ import os from 'os';
 
 const isPkg = typeof (process as NodeJS.Process & { pkg?: unknown }).pkg !== 'undefined';
 
-const TEMP_BIN_DIR = path.join(os.tmpdir(), 'amc-adb-bin');
+function getAdbExtractDir(): string {
+  if (process.platform === 'win32') {
+    const localAppData = process.env.LOCALAPPDATA ?? path.join(os.homedir(), 'AppData', 'Local');
+    return path.join(localAppData, 'AMC', 'adb');
+  }
+  if (process.platform === 'darwin') {
+    return path.join(os.homedir(), 'Library', 'Application Support', 'AMC', 'adb');
+  }
+  const xdgData = process.env.XDG_DATA_HOME ?? path.join(os.homedir(), '.local', 'share');
+  return path.join(xdgData, 'AMC', 'adb');
+}
 
 let resolvedPath: string | null = null;
 
@@ -35,33 +45,46 @@ export function getAdbPath(): string {
   const platform    = process.platform;
   const binaryName  = platform === 'win32' ? 'adb.exe' : 'adb';
   const platformDir = platform === 'win32' ? 'win' : platform === 'darwin' ? 'mac' : 'linux';
-  const destBinary  = path.join(TEMP_BIN_DIR, binaryName);
+  const adbExtractDir = getAdbExtractDir();
+  const destBinary    = path.join(adbExtractDir, binaryName);
+  const versionStamp  = path.join(adbExtractDir, 'adb-version.txt');
 
-  if (!fs.existsSync(destBinary)) {
-    fs.mkdirSync(TEMP_BIN_DIR, { recursive: true });
+  // Read the version bundled at build time (written by npm run setup).
+  const bundledVersionFile = path.join(__dirname, '..', 'bin', 'adb-version.txt');
+  const bundledVersion = fs.existsSync(bundledVersionFile)
+    ? fs.readFileSync(bundledVersionFile, 'utf8').trim()
+    : null;
+
+  const installedVersion = fs.existsSync(versionStamp)
+    ? fs.readFileSync(versionStamp, 'utf8').trim()
+    : null;
+
+  const needsExtract = !fs.existsSync(destBinary) || bundledVersion !== installedVersion;
+
+  if (needsExtract) {
+    fs.mkdirSync(adbExtractDir, { recursive: true });
 
     // In a pkg bundle, __dirname resolves inside the virtual snapshot filesystem.
     // Regular fs calls (readFileSync, copyFileSync) work transparently against it.
     const srcDir = path.join(__dirname, '..', 'bin', platformDir);
 
-    // Copy the main binary
     fs.copyFileSync(path.join(srcDir, binaryName), destBinary);
 
-    // On Windows, ADB needs its companion DLLs in the same directory
     if (platform === 'win32') {
       for (const entry of fs.readdirSync(srcDir)) {
         if (entry.endsWith('.dll')) {
-          fs.copyFileSync(
-            path.join(srcDir, entry),
-            path.join(TEMP_BIN_DIR, entry),
-          );
+          fs.copyFileSync(path.join(srcDir, entry), path.join(adbExtractDir, entry));
         }
       }
     }
 
-    // Ensure the binary is executable on Unix
     if (platform !== 'win32') {
       fs.chmodSync(destBinary, 0o755);
+    }
+
+    // Write version stamp so the next launch skips extraction unless the bundled version changes.
+    if (bundledVersion) {
+      fs.writeFileSync(versionStamp, bundledVersion);
     }
   }
 
